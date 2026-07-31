@@ -80,7 +80,11 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
+          echo "$KEYSTORE_BASE64" | grep -v '^-----' | tr -d '[:space:]' | base64 -d > release.keystore
+          if [ ! -s release.keystore ]; then
+            echo "::error::Decoded keystore file is empty — the KEYSTORE_BASE64 secret content is invalid."
+            exit 1
+          fi
           BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/*/ | sort -V | tail -n1)
           "${BUILD_TOOLS}apksigner" sign \
             --ks release.keystore \
