@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>مدیریت فرمول ملل</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d1b2e">
+<link rel="icon" href="assets/icon-192.png">
+<style>
+@font-face{
+  font-family:'BTitr';
+  src:url('assets/B_Titr_Bold_0.ttf') format('truetype');
+  font-weight:normal; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'BNazanin';
+  src:url('assets/B-NAZANIN.TTF') format('truetype');
+  font-weight:normal; font-style:normal; font-display:swap;
+}
+:root{
+  --bg:#0d1b2e;
+  --bg-2:#0f2136;
+  --card:#152944;
+  --card-2:#1b3252;
+  --gold:#c9703f;
+  --gold-2:#e8955f;
+  --text:#f2ede2;
+  --text-dim:#a9b7cc;
+  --danger:#e0555a;
+  --good:#4caf78;
+  --radius:16px;
+  --e1:0 1px 3px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.04);
+  --e2:0 4px 12px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+  --e3:0 10px 28px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+  --e-press:inset 0 2px 6px rgba(0,0,0,.4);
+  --on-gold:#1a1200;
+  --chip1:#20385a;
+  --chip2:#12233d;
+  --bg-glow:#16294a;
+  --gold-rgb:201,112,63;
+  --icon-accent2:#e8955f;
+}
+html[data-theme='sepahan']{
+  --bg:#111119;
+  --bg-2:#17171f;
+  --card:#1d1d28;
+  --card-2:#252533;
+  --gold:#f5c518;
+  --gold-2:#ffd94d;
+  --text:#f5f5f7;
+  --text-dim:#9a9aad;
+  --danger:#ef5b5b;
+  --good:#4caf78;
+  --on-gold:#1a1200;
+  --chip1:#2a2a38;
+  --chip2:#141420;
+  --bg-glow:#1f1f2c;
+  --gold-rgb:245,197,24;
+}
+html[data-theme='perspolis']{
+  --bg:#ffffff;
+  --bg-2:#fbfbfb;
+  --card:#ffffff;
+  --card-2:#f2f2f2;
+  --gold:#d21f27;
+  --gold-2:#ef4b4b;
+  --text:#141414;
+  --text-dim:#6b6b6b;
+  --danger:#b71c1c;
+  --good:#2e7d32;
+  --on-gold:#ffffff;
+  --chip1:#222222;
+  --chip2:#0a0a0a;
+  --bg-glow:#ffeaea;
+  --gold-rgb:210,31,39;
+}
+html[data-theme='aghaghia']{
+  --bg:#2a0d52;
+  --bg-2:#3a1264;
+  --card:#3f1670;
+  --card-2:#4f1f8a;
+  --gold:#ff6fae;
+  --gold-2:#ffa0cc;
+  --text:#f6eefc;
+  --text-dim:#cbb2e8;
+  --danger:#ff6b81;
+  --good:#4caf78;
+  --on-gold:#ffffff;
+  --chip1:#5a2a97;
+  --chip2:#3a1264;
+  --bg-glow:#5a2a97;
+  --gold-rgb:255,111,174;
+}
+html[data-theme='ruhparvar']{
+  --bg:#0e2d29;
+  --bg-2:#123a35;
+  --card:#154440;
+  --card-2:#1c534e;
+  --gold:#2ecc8f;
+  --gold-2:#5eeab0;
+  --text:#eefaf6;
+  --text-dim:#9fc7bd;
+  --danger:#ef5b6b;
+  --good:#2ecc8f;
+  --on-gold:#08211d;
+  --chip1:#1c534e;
+  --chip2:#0e2d29;
+  --bg-glow:#1c534e;
+  --gold-rgb:46,204,143;
+  --icon-accent2:#ec4899;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%; min-height:100vh; min-height:100dvh;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'BNazanin','Segoe UI',Tahoma,Arial,sans-serif;
+  overscroll-behavior:none; user-select:none;
+  padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom);
+  padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);
+}
+h1,h2,h3,
+.card-title, .tile span, .result-title, .about-card h2,
+.pill, .card-sub, .toast,
+button, .fab, .lock-btn, select, .modal h3, .topbar h1, .home-hero h2,
+.result-total, .toggle-row span{
+  font-family:'BTitr','BNazanin',Tahoma,Arial,sans-serif;
+}
+input,textarea{user-select:text;}
+#app{
+  width:100%; max-width:480px; margin:0 auto;
+  min-height:100vh; min-height:100dvh;
+  display:flex; flex-direction:column; position:relative;
+  background:radial-gradient(120% 60% at 50% -10%, var(--bg-glow) 0%, var(--bg) 55%);
+  box-sizing:border-box; overflow-x:hidden;
+}
+
+/* ---------- Splash ---------- */
+#splash{
+  position:fixed; inset:0; background:#eef2f7; z-index:999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:opacity .5s ease; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+#splash img{width:150px; height:150px; border-radius:28px; box-shadow:0 10px 30px rgba(20,40,70,.25);}
+#splash h1{color:#12233d; font-size:20px; margin:18px 0 2px;}
+#splash p{color:#4c6584; font-size:13px; margin:0 0 26px;}
+.loadbar{width:220px; height:6px; background:#dbe3ec; border-radius:6px; overflow:hidden;}
+.loadbar-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--gold),#b98d1f); border-radius:6px; transition:width .15s linear;}
+.loadtxt{margin-top:12px; font-size:12px; color:#6c85a3;}
+
+/* ---------- Lock screen ---------- */
+#lock{
+  position:fixed; inset:0; background:var(--bg); z-index:900;
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  padding:calc(24px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(24px + env(safe-area-inset-left));
+}
+#lock.show{display:flex;}
+#lock img{width:72px; height:72px; border-radius:18px; margin-bottom:14px;}
+#lock h2{margin:0 0 18px; font-size:16px; color:var(--text);}
+.pin-dots{display:flex; gap:12px; margin-bottom:18px;}
+.pin-dot{width:12px; height:12px; border-radius:50%; border:1.5px solid var(--gold); }
+.pin-dot.filled{background:var(--gold);}
+#lockPassInput{
+  width:220px; text-align:center; font-size:18px; letter-spacing:6px; padding:12px; border-radius:12px;
+  border:1px solid #2a415f; background:var(--card); color:var(--text); margin-bottom:12px;
+}
+.pattern-grid{display:grid; grid-template-columns:repeat(3,60px); grid-gap:22px; margin:10px 0 18px;}
+.pattern-dot{width:22px; height:22px; border-radius:50%; border:2px solid #4a6787; background:transparent; position:relative;}
+.pattern-dot.active{background:var(--gold); border-color:var(--gold);}
+.lock-btn{background:var(--gold); color:var(--on-gold); border:none; padding:11px 26px; border-radius:12px; font-size:14px; font-weight:700;}
+.lock-err{color:var(--danger); font-size:12px; height:16px; margin-top:6px;}
+.lock-fp{margin-top:14px; font-size:12px; color:var(--text-dim); text-decoration:underline;}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:calc(16px + env(safe-area-inset-top)) 18px 10px;
+  background:var(--bg); position:sticky; top:0; z-index:20;
+}
+.topbar h1{font-size:16px; margin:0; font-weight:700;}
+.backBtn{background:var(--card); border:none; color:var(--gold-2); width:36px; height:36px; border-radius:10px; font-size:16px;}
+
+/* ---------- Screens ---------- */
+.screen{display:none; flex:1; flex-direction:column; padding:0 16px calc(150px + env(safe-area-inset-bottom)); overflow-y:auto;}
+.screen.active{display:flex; animation:fadeIn .22s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* Home */
+.home-hero{display:flex; flex-direction:column; align-items:center; padding:18px 0 8px;}
+.home-hero img{width:64px; height:64px; border-radius:16px; margin-bottom:8px;}
+.home-hero h2{margin:0; font-size:17px;}
+.home-hero span{color:var(--text-dim); font-size:11px;}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px;}
+.tile{
+  background:linear-gradient(160deg, var(--card-2), var(--card));
+  border-radius:18px; padding:22px 10px; text-align:center;
+  border:1px solid rgba(255,255,255,.06);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  box-shadow:var(--e2); transition:transform .12s ease, box-shadow .12s ease;
+}
+.tile:active{transform:scale(.96); box-shadow:var(--e-press);}
+.tile .ic{
+  width:64px; height:64px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(160deg, var(--chip1), var(--chip2));
+  box-shadow:0 3px 8px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.tile .ic svg{width:38px; height:38px;}
+.tile span{font-size:13.5px; color:var(--text); font-weight:700;}
+
+/* Theme-driven icon variants: only one set is shown at a time */
+.ic-v{display:none;}
+.ic-v-default{display:block;}
+html[data-theme='sepahan'] .ic-v-default{display:none;}
+html[data-theme='sepahan'] .ic-v-sepahan{display:block;}
+html[data-theme='perspolis'] .ic-v-default{display:none;}
+html[data-theme='perspolis'] .ic-v-perspolis{display:block;}
+html[data-theme='ruhparvar'] .ic-v-default{display:none;}
+html[data-theme='ruhparvar'] .ic-v-ruhparvar{display:block;}
+
+/* Sepahan: rectangular, single button per row */
+html[data-theme='sepahan'] .grid{grid-template-columns:1fr; gap:10px;}
+html[data-theme='sepahan'] .tile{
+  flex-direction:row; justify-content:flex-start; text-align:right; gap:14px;
+  border-radius:10px; padding:14px 16px;
+}
+html[data-theme='sepahan'] .tile .ic{border-radius:8px;}
+
+/* Persepolis: decorative crenellation frieze above the home hero, evoking Achaemenid architecture */
+html[data-theme='perspolis'] .home-hero{position:relative; padding-top:18px;}
+html[data-theme='perspolis'] .home-hero::before{
+  content:""; display:block; width:100%; max-width:220px; height:12px; margin:0 auto 14px;
+  background-image:
+    linear-gradient(45deg, var(--gold) 25%, transparent 25%, transparent 75%, var(--gold) 75%),
+    linear-gradient(45deg, var(--gold) 25%, transparent 25%, transparent 75%, var(--gold) 75%);
+  background-position:0 0, 6px 6px;
+  background-size:12px 12px;
+  opacity:.55;
+}
+.about-btn{
+  margin-top:14px; background:linear-gradient(160deg, var(--gold-2), var(--gold)); border:none; color:#fff;
+  padding:15px; border-radius:30px; text-align:center; font-size:14px; font-weight:700;
+  box-shadow:0 8px 20px rgba(var(--gold-rgb),.35), inset 0 1px 0 rgba(255,255,255,.3); transition:transform .12s ease, box-shadow .12s ease;
+}
+.about-btn:active{transform:scale(.97); box-shadow:var(--e-press);}
+
+/* Generic list/card */
+.card{background:linear-gradient(160deg, var(--card-2), var(--card)); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:14px; margin-bottom:12px; box-shadow:var(--e1);}
+.card-row{display:flex; justify-content:space-between; align-items:center;}
+.card-title{font-size:14px; font-weight:700;}
+.card-sub{font-size:12px; color:var(--text-dim); margin-top:3px;}
+.pill{background:linear-gradient(160deg, var(--chip1), var(--chip2)); color:var(--gold-2); font-size:11px; padding:4px 11px; border-radius:20px; box-shadow:var(--e1); border:1px solid rgba(255,255,255,.08);}
+.icon-btn{background:transparent; border:none; color:var(--text-dim); font-size:16px; padding:4px 6px;}
+.icon-btn.danger{color:var(--danger);}
+.icon-btn.edit{color:var(--gold-2);}
+
+/* Bottom Navigation */
+.bottomnav{
+  position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto;
+  background:var(--card); border-top:1px solid #223b5c; display:none;
+  justify-content:space-around; padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  z-index:50;
+}
+.bottomnav.show{display:flex;}
+.bottomnav .nb{display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--text-dim); font-size:11px; background:none; border:none; padding:5px 10px; border-radius:10px; transition:.15s;}
+.bottomnav .nb .nbicon{display:flex; align-items:center; justify-content:center;}
+.bottomnav .nb.active{color:var(--gold-2); background:rgba(var(--gold-rgb),.12);}
+.bottomnav .nb:active{transform:scale(.92);}
+
+/* Material-ish press feedback */
+.card{transition:box-shadow .15s ease; box-shadow:var(--e1);}
+.icon-btn, .lock-btn, .lock-fp{transition:transform .12s ease;}
+.icon-btn:active, .lock-btn:active{transform:scale(.93);}
+.fab{
+  position:fixed; left:0; right:0; margin:0 auto; max-width:448px; width:calc(100% - 32px);
+  bottom:calc(78px + env(safe-area-inset-bottom));
+  background:linear-gradient(160deg, var(--gold-2), var(--gold)); color:var(--on-gold); border:none; padding:14px; border-radius:14px; font-weight:700; font-size:14px;
+  box-shadow:0 8px 20px rgba(var(--gold-rgb),.35), inset 0 1px 0 rgba(255,255,255,.35); z-index:5; transition:transform .12s ease, box-shadow .12s ease;
+}
+.fab:active{transform:scale(.97); box-shadow:var(--e-press);}
+.fab.secondary{position:static; box-shadow:var(--e1); width:100%; margin-top:6px; background:linear-gradient(160deg, var(--card-2), var(--card)); color:var(--gold-2); border:1px solid var(--gold);}
+.fab.secondary:active{transform:scale(.97); box-shadow:var(--e-press);}
+
+/* Forms */
+label{font-size:12px; color:var(--text-dim); display:block; margin:12px 0 5px;}
+input[type=text],input[type=number],input[type=tel],input[type=password],select,textarea{
+  width:100%; padding:12px; border-radius:12px; border:1px solid #2a415f; background:var(--card-2); color:var(--text); font-size:14px; font-family:inherit;
+  box-shadow:var(--e-press); transition:border-color .15s ease, box-shadow .15s ease;
+}
+input:focus, select:focus, textarea:focus{
+  outline:none; border-color:var(--gold); box-shadow:var(--e-press), 0 0 0 3px rgba(var(--gold-rgb),.18);
+}
+input.input-error{border-color:var(--danger); box-shadow:var(--e-press), 0 0 0 3px rgba(224,85,90,.18);}
+select{appearance:none;}
+.form-box{background:linear-gradient(160deg, var(--card-2), var(--card)); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:14px; margin-top:14px; box-shadow:var(--e1);}
+.row2{display:flex; gap:10px;}
+.row2 > div{flex:1;}
+.matline{display:flex; gap:8px; align-items:center; background:var(--card-2); padding:8px 10px; border-radius:10px; margin-bottom:8px; box-shadow:var(--e-press);}
+.matline .mname{flex:1; font-size:13px;}
+.matline input{width:80px; padding:8px; font-size:13px;}
+.sum-box{display:flex; justify-content:space-between; font-size:13px; margin-top:10px; padding-top:10px; border-top:1px dashed #2a415f;}
+.sum-box.warn{color:var(--danger);}
+.sum-box.ok{color:var(--good);}
+.hint{font-size:11px; color:var(--text-dim); margin-top:8px; line-height:1.9;}
+.toggle-row{display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid #223b5c;}
+.switch{position:relative; width:46px; height:26px;}
+.switch input{opacity:0; width:0; height:0;}
+.slider{position:absolute; inset:0; background:#2a415f; border-radius:20px; transition:.2s; cursor:pointer; box-shadow:var(--e-press);}
+.slider:before{content:""; position:absolute; width:20px; height:20px; right:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.4);}
+input:checked + .slider{background:linear-gradient(160deg, var(--gold-2), var(--gold));}
+input:checked + .slider:before{transform:translateX(-20px);}
+
+.result-card{background:linear-gradient(160deg, var(--card-2), var(--card)); border:1px solid var(--gold); border-radius:18px; padding:18px; box-shadow:var(--e3);}
+.result-title{font-size:15px; font-weight:700; color:var(--gold-2); margin-bottom:10px;}
+.result-line{display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px dashed #22395a;}
+.result-total{display:flex; justify-content:space-between; font-size:16px; font-weight:800; margin-top:12px; color:var(--gold-2);}
+.share-row{display:flex; gap:10px; margin-top:14px;}
+.share-row button{flex:1; padding:12px; border-radius:12px; border:1px solid var(--gold); background:linear-gradient(160deg, var(--card-2), var(--card)); color:var(--gold-2); font-size:13px; box-shadow:var(--e1); transition:transform .12s ease;}
+.share-row button:active{transform:scale(.96); box-shadow:var(--e-press);}
+
+.data-table{width:100%; border-collapse:collapse; font-size:13px;}
+.data-table th{color:var(--gold-2); font-weight:700; text-align:start; padding:8px 6px; border-bottom:2px solid #223b5c; font-size:12px;}
+.data-table td{padding:9px 6px; border-bottom:1px dashed #22395a;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table .num{text-align:start; direction:ltr; unicode-bidi:isolate;}
+.table-total-row td{font-weight:800; color:var(--gold-2); border-top:2px solid #223b5c; padding-top:12px;}
+
+.theme-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
+.theme-opt{
+  flex:1 1 calc(50% - 5px); min-width:120px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 8px;
+  background:var(--card-2); border:2px solid transparent; border-radius:14px; box-shadow:var(--e1);
+  transition:transform .12s ease, border-color .15s ease;
+}
+.theme-opt.active{border-color:var(--gold);}
+.theme-opt:active{transform:scale(.96);}
+.theme-opt .swatch{width:38px; height:38px; border-radius:50%; box-shadow:inset 0 0 0 3px rgba(255,255,255,.08);}
+.theme-opt span{font-size:12.5px; color:var(--text); font-weight:700;}
+
+.empty{text-align:center; color:var(--text-dim); font-size:13px; padding:40px 10px;}
+
+/* modal */
+.modal-bg{position:fixed; inset:0; background:rgba(4,10,20,.6); z-index:200; display:none; align-items:flex-end; justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal{background:linear-gradient(180deg, var(--bg-2), var(--bg)); width:100%; max-width:480px; border-radius:22px 22px 0 0; padding:18px; max-height:85vh; overflow-y:auto; box-shadow:0 -10px 30px rgba(0,0,0,.5);}
+.modal h3{margin:0 0 12px; font-size:15px;}
+.modal .close-x{float:left; background:none; border:none; color:var(--text-dim); font-size:18px;}
+
+.about-card{text-align:center; padding:20px 0;}
+.about-card img{width:70px; height:70px; border-radius:18px; margin-bottom:10px;}
+.dev-photo-ph{width:60px; height:60px; border-radius:50%; background:var(--card-2); margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:22px;}
+.toast{position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:#1c2f4a; color:var(--text); padding:11px 18px; border-radius:12px; font-size:13px; z-index:500; opacity:0; transition:.25s; pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:var(--gold-2)"/>
+      <stop offset="100%" style="stop-color:var(--gold)"/>
+    </linearGradient>
+  </defs>
+</svg>
+<div id="app">
+
+  <!-- SPLASH -->
+  <div id="splash">
+    <img src="assets/icon.png" alt="Mellal Chem">
+    <h1>Mellal Chem</h1>
+    <p>مدیریت فرمول و محاسبات تولید</p>
+    <div class="loadbar"><div class="loadbar-fill" id="loadFill"></div></div>
+    <div class="loadtxt">در حال بارگذاری...</div>
+  </div>
+
+  <!-- LOCK -->
+  <div id="lock">
+    <img src="assets/icon.png">
+    <h2 id="lockTitle">ورود به نرم‌افزار</h2>
+    <div id="lockPassMode">
+      <input type="password" id="lockPassInput" inputmode="numeric" placeholder="رمز عبور">
+      <div style="text-align:center"><button class="lock-btn" onclick="tryPassUnlock()">ورود</button></div>
+    </div>
+    <div id="lockPatternMode" style="display:none">
+      <div class="pattern-grid" id="lockPatternGrid"></div>
+    </div>
+    <div class="lock-err" id="lockErr"></div>
+    <div class="lock-fp" id="lockFpBtn" onclick="tryFingerprint()" style="display:none">ورود با اثر انگشت</div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar" style="display:none">
+    <button class="backBtn" id="backBtn" onclick="goHome()" style="display:none">→</button>
+    <h1 id="screenTitle">Mellal Chem</h1>
+    <div style="width:36px"></div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen" id="screen-home">
+    <div class="home-hero">
+      <img src="assets/icon.png">
+      <h2>محاسبات تولید ملل</h2>
+      <span>Mellal Chem — نسخه 140505-1</span>
+    </div>
+    <div class="grid">
+      <div class="tile" onclick="nav('materials')"><div class="ic">
+        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><path d="M19 6h10 M21 6v10l-9 20a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-20V6" fill="none" stroke="url(#g1)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 30h16" stroke="url(#g1)" stroke-width="2.2" fill="none"/><circle cx="22" cy="35" r="1.6" fill="var(--gold-2)"/><circle cx="27" cy="33" r="1.2" fill="var(--gold-2)"/></svg>
+        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><path d="M19 6h10v6l9 20a3 3 0 0 1-3 4H13a3 3 0 0 1-3-4l9-20V6z" fill="url(#g1)" stroke="none"/><rect x="14" y="30" width="20" height="5" rx="1.5" fill="var(--bg)" opacity=".5"/></svg>
+        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="none" stroke="url(#g1)" stroke-width="2.2"><circle cx="24" cy="24" r="8"/><circle cx="24" cy="24" r="3" fill="url(#g1)" stroke="none"/><path d="M24 8v6 M24 34v6 M8 24h6 M34 24h6 M12.3 12.3l4.2 4.2 M31.5 31.5l4.2 4.2 M12.3 35.7l4.2-4.2 M31.5 16.5l4.2-4.2"/></g></svg>
+        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M20 6h8 M22 6v10l-8 18a2.4 2.4 0 0 0 2.2 3.4h15.6A2.4 2.4 0 0 0 34 34l-8-18V6" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><path d="M17.5 28c1.5 1.4 3 1.4 4.5 0s3-1.4 4.5 0 3 1.4 4.5 0l1 2.4c1 2.4-.6 5.6-3.6 5.6H20.1c-3 0-4.6-3.2-3.6-5.6z" fill="var(--icon-accent2)" stroke="none"/></svg>
+      </div><span>مواد اولیه</span></div>
+      <div class="tile" onclick="nav('formulas')"><div class="ic">
+        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="35" rx="4" fill="none" stroke="url(#g1)" stroke-width="2.4"/><rect x="17" y="4" width="14" height="7" rx="2" fill="none" stroke="url(#g1)" stroke-width="2.2"/><path d="M15 20l3 3 5-6 M15 30l3 3 5-6" stroke="var(--gold-2)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 20h6 M27 30h6" stroke="var(--gold-2)" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="35" rx="3" fill="url(#g1)"/><rect x="15" y="4" width="18" height="6" rx="1.5" fill="var(--chip1)"/><rect x="15" y="18" width="18" height="3.5" rx="1" fill="var(--bg)" opacity=".55"/><rect x="15" y="26" width="18" height="3.5" rx="1" fill="var(--bg)" opacity=".55"/><rect x="15" y="34" width="10" height="3.5" rx="1" fill="var(--bg)" opacity=".55"/></svg>
+        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="url(#g1)"><rect x="8" y="30" width="6" height="8"/><rect x="17" y="26" width="6" height="12"/><rect x="26" y="30" width="6" height="8"/><rect x="35" y="26" width="6" height="12"/></g><path d="M8 26h33" stroke="url(#g1)" stroke-width="2.2"/></svg>
+        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><g stroke="var(--gold)" stroke-width="2"><path d="M14 16l10 8 M24 24l10-9 M24 24v11"/></g><circle cx="14" cy="16" r="4.2" fill="var(--icon-accent2)"/><circle cx="34" cy="15" r="4.2" fill="var(--icon-accent2)"/><circle cx="24" cy="24" r="4.2" fill="var(--icon-accent2)"/><circle cx="18" cy="38" r="4.2" fill="var(--icon-accent2)"/><path d="M24 24l-6 14" stroke="var(--gold)" stroke-width="2"/></svg>
+      </div><span>فرمول‌ها</span></div>
+      <div class="tile" onclick="nav('costs')"><div class="ic">
+        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><circle cx="16" cy="32" r="7" fill="none" stroke="url(#g1)" stroke-width="2.4"/><circle cx="27" cy="32" r="7" fill="none" stroke="url(#g1)" stroke-width="2.4"/><path d="M9 20L20 10l6 5 12-12" stroke="var(--gold-2)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 3h8v8" stroke="var(--gold-2)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><circle cx="17" cy="30" r="8" fill="url(#g1)"/><circle cx="29" cy="20" r="8" fill="var(--chip1)"/><circle cx="29" cy="20" r="8" fill="url(#g1)" opacity=".55"/></svg>
+        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="none" stroke="url(#g1)" stroke-width="2.2"><circle cx="24" cy="24" r="7"/></g><g stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"><path d="M24 8v6 M24 34v6 M8 24h6 M34 24h6 M13 13l4.2 4.2 M30.8 30.8l4.2 4.2 M13 35l4.2-4.2 M30.8 17.2l4.2-4.2"/></g></svg>
+        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M13 8h6 M14 8v7l-6 14a2 2 0 0 0 1.9 2.8h11.4A2 2 0 0 0 23 29l-6-14V8" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/><path d="M29 8h6 M30 8v7l-6 14a2 2 0 0 0 1.9 2.8h11.4A2 2 0 0 0 39 29l-6-14V8" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/><path d="M12 24h11" stroke="var(--gold)" stroke-width="1.8" stroke-dasharray="2 2"/><path d="M11 28a5 5 0 0 0 10 0z" fill="var(--icon-accent2)"/><path d="M27 28a5 5 0 0 0 10 0z" fill="var(--icon-accent2)"/></svg>
+      </div><span>هزینه‌های تولید</span></div>
+      <div class="tile" onclick="nav('produce')"><div class="ic">
+        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><path d="M18 6h7 M20 6v9l-7 15a2.6 2.6 0 0 0 2.4 3.7H29" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="28" y="20" width="14" height="18" rx="2.5" fill="none" stroke="url(#g1)" stroke-width="2.2"/><path d="M31 24h8 M31 29h2.2 M35.8 29h2.2 M31 33.5h2.2 M35.8 33.5h2.2" stroke="var(--gold-2)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><path d="M18 6h7v6l8 17a2.6 2.6 0 0 1-2.4 3.7H12.4A2.6 2.6 0 0 1 10 28.7L18 12V6z" fill="url(#g1)"/><rect x="16" y="27" width="14" height="4" rx="1" fill="var(--bg)" opacity=".5"/></svg>
+        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><path d="M8 20c6-8 12-8 16 0" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linecap="round"/><path d="M40 20c-6-8-12-8-16 0" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="20" r="4" fill="url(#g1)"/><path d="M24 24v14" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/><path d="M17 38h14" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><circle cx="18" cy="16" r="7" fill="none" stroke="var(--gold)" stroke-width="2"/><path d="M18 6v3 M18 23v3 M8 16h3 M25 16h3 M11.5 9.5l2 2 M22.5 22.5l2 2 M11.5 22.5l2-2 M22.5 9.5l2 2" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/><path d="M31 12h9v22a4.5 4.5 0 0 1-9 0z" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/><path d="M31 25h9v9a4.5 4.5 0 0 1-9 0z" fill="var(--icon-accent2)"/></svg>
+      </div><span>ماشین حساب تولید</span></div>
+      <div class="tile" onclick="nav('settings')"><div class="ic">
+        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><circle cx="20" cy="20" r="6.5" fill="none" stroke="url(#g1)" stroke-width="2.4"/><path d="M20 8v3 M20 29v3 M8 20h3 M29 20h3 M11.5 11.5l2 2 M26.5 26.5l2 2 M11.5 28.5l2-2 M26.5 13.5l2-2" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/><path d="M24 30l12 12 M40 30l-12 12" stroke="var(--gold-2)" stroke-width="2.6" stroke-linecap="round"/></svg>
+        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><circle cx="24" cy="24" r="10" fill="url(#g1)"/><path d="M24 6v6 M24 36v6 M6 24h6 M36 24h6 M11 11l4.2 4.2 M32.8 32.8l4.2 4.2 M11 37l4.2-4.2 M32.8 15.2l4.2-4.2" stroke="url(#g1)" stroke-width="3.4" stroke-linecap="round"/></svg>
+        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="none" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"><path d="M14 40V16c0-4 4-7 10-7s10 3 10 7v24"/><path d="M14 40h20 M10 12c2-3 6-3 8 0 M20 12c2-3 6-3 8 0 M28 12c2-3 6-3 8 0"/></g></svg>
+        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M24 8v4 M24 36v4 M8 24h4 M36 24h4 M13 13l2.8 2.8 M32.2 32.2l2.8 2.8 M13 35l2.8-2.8 M32.2 15.8l2.8-2.8" stroke="var(--gold)" stroke-width="2.6" stroke-linecap="round"/><circle cx="24" cy="24" r="9" fill="none" stroke="var(--gold)" stroke-width="2.2"/><circle cx="24" cy="24" r="3.6" fill="var(--icon-accent2)"/></svg>
+      </div><span>تنظیمات</span></div>
+      <div class="tile" onclick="nav('backup')"><div class="ic">
+        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><path d="M14 30a7 7 0 0 1 1-13.9 9.5 9.5 0 0 1 18.4-2A7.5 7.5 0 0 1 34 30H14z" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linejoin="round"/><path d="M24 21v13 M19 27l5-5 5 5" stroke="var(--gold-2)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><path d="M14 30a7 7 0 0 1 1-13.9 9.5 9.5 0 0 1 18.4-2A7.5 7.5 0 0 1 34 30H14z" fill="url(#g1)"/><path d="M19 27l5-5 5 5" stroke="var(--bg)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>
+        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><path d="M16 40h16l-8-14z" fill="none" stroke="url(#g1)" stroke-width="2.2" stroke-linejoin="round"/><path d="M24 26c-3-4-2-8 0-11 2 3 3 7 0 11z" fill="url(#g1)"/><path d="M10 40h28" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M20 22h8 M22 22v6l-7 10a2.2 2.2 0 0 0 2 3.2h14a2.2 2.2 0 0 0 2-3.2l-7-10v-6" fill="none" stroke="var(--gold)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/><path d="M24 6c-3 4-4 8 0 12 4-4 3-8 0-12z" fill="var(--icon-accent2)"/></svg>
+      </div><span>پشتیبان‌گیری</span></div>
+    </div>
+    <div class="about-btn" onclick="nav('about')">درباره برنامه</div>
+    <div class="fab secondary" style="margin-top:10px; color:var(--danger); border-color:var(--danger);" onclick="confirmExit()">خروج از برنامه</div>
+  </div>
+
+
+  <!-- MATERIALS -->
+  <div class="screen" id="screen-materials">
+    <div id="materialsList"></div>
+    <button class="fab" onclick="openMaterialModal()">+ افزودن ماده اولیه</button>
+  </div>
+
+  <!-- COSTS -->
+  <div class="screen" id="screen-costs">
+    <div id="costsList"></div>
+    <button class="fab" onclick="openCostModal()">+ افزودن هزینه تولید</button>
+  </div>
+
+  <!-- FORMULAS -->
+  <div class="screen" id="screen-formulas">
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <button class="fab secondary" onclick="openGroupModal()">مدیریت گروه‌ها</button>
+    </div>
+    <div id="formulasList"></div>
+    <button class="fab" onclick="openFormulaEditor()">+ فرمول جدید</button>
+  </div>
+
+  <!-- FORMULA EDITOR -->
+  <div class="screen" id="screen-formulaEditor">
+    <div class="form-box">
+      <label>نام فرمول</label>
+      <input type="text" id="fName" placeholder="مثلاً ماستیک اکریلیک 205">
+      <label>گروه</label>
+      <select id="fGroup"></select>
+      <label>میزان کل فرمول (کیلوگرم)</label>
+      <input type="number" id="fBatchKg" placeholder="مثلاً 100" step="0.01">
+      <label style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+        <span>مواد اولیه فرمول (کیلوگرم)</span>
+        <span style="display:flex; gap:6px;">
+          <button type="button" class="icon-btn edit" style="border:1px solid var(--gold); border-radius:8px; padding:3px 10px; font-size:12px;" onclick="openMaterialPicker()">+ افزودن ماده</button>
+          <button type="button" class="icon-btn edit" style="border:1px solid var(--gold); border-radius:8px; padding:3px 10px; font-size:12px;" onclick="quickAddMaterial()">+ ماده جدید</button>
+        </span>
+      </label>
+      <div id="fMaterialsBox"></div>
+      <label style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+        <span>خدمات / هزینه‌های تولید (اختیاری)</span>
+        <span style="display:flex; gap:6px;">
+          <button type="button" class="icon-btn edit" style="border:1px solid var(--gold); border-radius:8px; padding:3px 10px; font-size:12px;" onclick="openCostPicker()">+ افزودن خدمت</button>
+          <button type="button" class="icon-btn edit" style="border:1px solid var(--gold); border-radius:8px; padding:3px 10px; font-size:12px;" onclick="quickAddCost()">+ خدمت جدید</button>
+        </span>
+      </label>
+      <div id="fCostsBox"></div>
+      <div class="sum-box" id="fSumBox"></div>
+
+      <label style="margin-top:20px;">پیش‌فرض سود و اقساط برای این فرمول (اختیاری)</label>
+      <div class="row2">
+        <div><label>حاشیه سود (تومان/کیلوگرم)</label><input type="number" id="fDefaultMargin" step="1" value="0"></div>
+        <div><label>تعداد ماه</label><input type="number" id="fDefaultMonths" step="1" value="0"></div>
+      </div>
+      <label>کارمزد هر ماه (٪)</label>
+      <input type="number" id="fDefaultFee" step="0.1" value="0">
+      <div class="hint">این مقادیر هر بار در «دریافت فرمول تولید» برای این فرمول به‌طور خودکار پر می‌شوند (قابل تغییر در همان لحظه).</div>
+
+      <button class="fab secondary" onclick="saveFormula()">ذخیره فرمول</button>
+    </div>
+  </div>
+
+  <!-- PRODUCE -->
+  <div class="screen" id="screen-produce">
+    <div class="form-box">
+      <label>انتخاب فرمول</label>
+      <select id="pFormula" onchange="renderProduceInfo()"></select>
+      <label>میزان مورد نیاز (کیلوگرم)</label>
+      <input type="number" id="pQty" step="0.01" oninput="calcProduce()">
+      <div class="hint" id="pFormulaInfo"></div>
+    </div>
+
+    <div id="produceTable1" style="margin-top:14px;"></div>
+    <div id="produceTable2" style="margin-top:14px;"></div>
+
+    <div class="form-box" id="profitBox" style="display:none; margin-top:14px;">
+      <div class="card-title" style="margin-bottom:6px;">محاسبه سود و اقساط</div>
+      <div class="row2">
+        <div><label>حاشیه سود (تومان به ازای هر کیلوگرم)</label><input type="number" id="marginInput" step="1" value="0" oninput="renderProfitTable()"></div>
+        <div><label>تعداد ماه</label><input type="number" id="monthsInput" step="1" value="0" oninput="renderProfitTable()"></div>
+      </div>
+      <label>کارمزد هر ماه (٪)</label>
+      <input type="number" id="feeInput" step="0.1" value="0" oninput="renderProfitTable()">
+      <div id="produceTable3" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+
+  <!-- BACKUP -->
+  <div class="screen" id="screen-backup">
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:8px;">پشتیبان‌گیری</div>
+      <div class="hint">از تمام اطلاعات نرم‌افزار (مواد، هزینه‌ها، فرمول‌ها، تاریخچه و تنظیمات) یک پشتیبان رمزگذاری‌شده (با هش تایید صحت) تهیه می‌شود.</div>
+      <button class="fab secondary" onclick="doBackup()">تهیه فایل پشتیبان (ذخیره در Documents)</button>
+      <button class="fab secondary" onclick="showBackupText()">نمایش و کپی متن پشتیبان</button>
+      <div class="hint">در نسخه‌ی نصبی گوشی، فایل مستقیم در پوشه‌ی Documents ذخیره می‌شود. اگر ذخیره ناموفق بود، از گزینه‌ی «کپی متن» استفاده کنید.</div>
+    </div>
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:8px;">بازیابی از حافظه گوشی</div>
+      <div class="hint">فایل‌های پشتیبان ذخیره‌شده در Documents گوشی:</div>
+      <div id="backupFileList" style="margin-top:8px;"></div>
+      <button class="fab secondary" onclick="listBackupFiles()">به‌روزرسانی لیست</button>
+    </div>
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:8px;">بازیابی از فایل یا متن</div>
+      <div class="hint">با انتخاب فایل پشتیبان یا چسباندن متن آن، اطلاعات فعلی جایگزین می‌شود.</div>
+      <input type="file" id="restoreFile" accept=".mcb,.json,text/plain,application/json" style="margin-top:10px;">
+      <button class="fab secondary" onclick="doRestore()">بازیابی از فایل</button>
+      <label style="margin-top:16px;">یا متن فایل پشتیبان را اینجا بچسبانید</label>
+      <textarea id="restoreText" rows="5" placeholder="متن پشتیبان را اینجا Paste کنید..."></textarea>
+      <button class="fab secondary" onclick="doRestoreFromText()">بازیابی از متن</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="screen-settings">
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:6px;">تم برنامه</div>
+      <div class="theme-row">
+        <button type="button" class="theme-opt" id="themeOptMavara" onclick="selectTheme('mavara')">
+          <div class="swatch" style="background:linear-gradient(135deg,#0d1b2e 50%,#c9703f 50%);"></div>
+          <span>تم ماورا</span>
+        </button>
+        <button type="button" class="theme-opt" id="themeOptSepahan" onclick="selectTheme('sepahan')">
+          <div class="swatch" style="background:linear-gradient(135deg,#111119 50%,#f5c518 50%);"></div>
+          <span>تم سپاهان</span>
+        </button>
+        <button type="button" class="theme-opt" id="themeOptPerspolis" onclick="selectTheme('perspolis')">
+          <div class="swatch" style="background:linear-gradient(135deg,#ffffff 50%,#d21f27 50%); box-shadow:inset 0 0 0 1px #ccc, inset 0 0 0 3px rgba(255,255,255,.08);"></div>
+          <span>تم پرسپولیس</span>
+        </button>
+        <button type="button" class="theme-opt" id="themeOptAghaghia" onclick="selectTheme('aghaghia')">
+          <div class="swatch" style="background:linear-gradient(135deg,#2a0d52 50%,#ff6fae 50%);"></div>
+          <span>تم اقاقیا</span>
+        </button>
+        <button type="button" class="theme-opt" id="themeOptRuhparvar" onclick="selectTheme('ruhparvar')">
+          <div class="swatch" style="background:linear-gradient(135deg,#0e2d29 50%,#2ecc8f 50%);"></div>
+          <span>تم روح‌پرور</span>
+        </button>
+      </div>
+    </div>
+    <div class="form-box">
+      <div class="toggle-row">
+        <span>استفاده از حالت امنیتی برای ورود</span>
+        <label class="switch"><input type="checkbox" id="secEnabled" onchange="toggleSecurity()"><span class="slider"></span></label>
+      </div>
+      <div id="secDetails" style="display:none">
+        <label>روش قفل</label>
+        <select id="secMethod" onchange="renderSecMethod()">
+          <option value="pass">رمز عبور</option>
+          <option value="pattern">الگو</option>
+        </select>
+        <div id="secPassSetup" style="margin-top:10px;">
+          <input type="password" id="newPass" placeholder="رمز عبور جدید" inputmode="numeric">
+          <button class="fab secondary" onclick="setPassword()">ذخیره رمز عبور</button>
+        </div>
+        <div id="secPatternSetup" style="display:none; margin-top:10px; text-align:center;">
+          <div class="pattern-grid" id="setPatternGrid" style="margin:14px auto;"></div>
+          <div class="hint" id="setPatternHint">الگوی جدید را رسم کنید</div>
+        </div>
+        <div class="toggle-row" id="fpRow" style="border-top:1px solid #223b5c; margin-top:10px;">
+          <span>ورود با اثر انگشت</span>
+          <label class="switch"><input type="checkbox" id="fpEnabled" onchange="toggleFingerprint()"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="screen" id="screen-about">
+    <div class="about-card">
+      <img src="assets/icon.png">
+      <h2 style="margin:6px 0 2px;">Mellal Chem</h2>
+      <div style="color:var(--text-dim); font-size:12px;">نرم‌افزار محاسبات تولید ملل</div>
+      <div class="pill" style="display:inline-block; margin-top:10px;">نسخه 140505-1</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px;">اطلاعات سازنده</div>
+      <img src="assets/dev-photo.jpg" style="width:150px; height:150px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 10px; border:3px solid var(--gold);">
+      <div style="text-align:center;">
+        <div style="font-weight:700; font-size:14px;">مصطفی زارعی</div>
+        <div style="color:var(--text-dim); font-size:12px; margin-bottom:10px;">سازنده و برنامه‌نویس</div>
+        <a href="tel:09132254240" style="color:var(--gold-2); font-size:14px; text-decoration:none;">📞 09132254240</a>
+      </div>
+    </div>
+    <div class="hint" style="text-align:center; margin-top:6px;">تمامی حقوق محفوظ است © 1405</div>
+  </div>
+
+</div>
+
+<div class="bottomnav" id="bottomNav">
+  <button class="nb" data-t="home" onclick="nav('home')"><span class="nbicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg></span>خانه</button>
+  <button class="nb" data-t="produce" onclick="nav('produce')"><span class="nbicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M10 2h4"/><path d="M11 2v6l-6 11a1.6 1.6 0 0 0 1.4 2.3h11.2A1.6 1.6 0 0 0 19 19L13 8V2"/><path d="M8 15h8"/></svg></span>تولید</button>
+  <button class="nb" data-t="settings" onclick="nav('settings')"><span class="nbicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>تنظیمات</button>
+  <button class="nb" data-t="formulas" onclick="nav('formulas')"><span class="nbicon"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="3.5" width="14" height="17.5" rx="2"/><rect x="8.5" y="2" width="7" height="3.5" rx="1"/><path d="M8 11l1.5 1.5L12 9.5 M8 15.5l1.5 1.5L12 14"/><path d="M13.5 11h3 M13.5 15.5h3"/></svg></span>فرمول‌ها</button>
+</div>
+
+<!-- MATERIAL MODAL -->
+<div class="modal-bg" id="materialModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('materialModalBg')">×</button>
+  <h3 id="materialModalTitle">ماده اولیه جدید</h3>
+  <label>نام ماده</label>
+  <input type="text" id="matName" placeholder="مثلاً رزین ایکس">
+  <label>نام مخفف (اختیاری — برای اشتراک‌گذاری فرمول)</label>
+  <input type="text" id="matShort" placeholder="مثلاً RX-14">
+  <label>قیمت هر کیلوگرم (تومان)</label>
+  <input type="number" id="matPrice" step="1">
+  <button class="fab secondary" onclick="saveMaterial()">ذخیره</button>
+</div></div>
+
+<!-- COST MODAL -->
+<div class="modal-bg" id="costModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('costModalBg')">×</button>
+  <h3 id="costModalTitle">هزینه تولید جدید</h3>
+  <label>عنوان (مثلاً دستمزد تولید)</label>
+  <input type="text" id="costName">
+  <label>نوع محاسبه</label>
+  <select id="costType">
+    <option value="perkg">به ازای هر کیلوگرم</option>
+    <option value="perbatch">به ازای هر بار تولید (کل فرمول)</option>
+  </select>
+  <label>مبلغ (تومان)</label>
+  <input type="number" id="costAmount" step="1">
+  <button class="fab secondary" onclick="saveCost()">ذخیره</button>
+</div></div>
+
+<!-- GROUP MODAL -->
+<div class="modal-bg" id="groupModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('groupModalBg')">×</button>
+  <h3>مدیریت گروه‌ها</h3>
+  <div id="groupList" style="margin-bottom:12px;"></div>
+  <label>نام گروه جدید</label>
+  <input type="text" id="newGroupName" placeholder="مثلاً ماستیک">
+  <button class="fab secondary" onclick="addGroup()">افزودن گروه</button>
+</div></div>
+
+<!-- BACKUP TEXT MODAL -->
+<div class="modal-bg" id="backupTextModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('backupTextModalBg')">×</button>
+  <h3>متن پشتیبان</h3>
+  <div class="hint">این متن را کپی کرده و در یک یادداشت، ایمیل یا پیام برای خودتان ذخیره کنید. برای بازیابی، همین متن را در بخش «بازیابی از متن» بچسبانید.</div>
+  <textarea id="backupTextArea" rows="10" readonly style="margin-top:10px; font-size:11px; direction:ltr; text-align:left;"></textarea>
+  <button class="fab secondary" onclick="copyBackupText()">کپی به کلیپ‌بورد</button>
+</div></div>
+
+<!-- EXIT CONFIRM MODAL -->
+<div class="modal-bg" id="exitModalBg"><div class="modal" style="text-align:center;">
+  <h3>خروج از برنامه</h3>
+  <div class="hint">آیا می‌خواهید از برنامه خارج شوید؟</div>
+  <div class="share-row" style="margin-top:16px;">
+    <button onclick="closeModal('exitModalBg')">انصراف</button>
+    <button style="border-color:var(--danger); color:var(--danger);" onclick="doExit()">خروج</button>
+  </div>
+</div></div>
+
+<!-- SHARE IMAGE PREVIEW MODAL -->
+<div class="modal-bg" id="shareImageModalBg"><div class="modal" style="text-align:center;">
+  <button class="close-x" onclick="closeModal('shareImageModalBg')">×</button>
+  <h3>تصویر فرمول</h3>
+  <div class="hint">برای ذخیره در گالری، انگشتتان را روی تصویر زیر نگه دارید و گزینه‌ی «ذخیره تصویر» را بزنید.</div>
+  <img id="shareImagePreview" style="width:100%; border-radius:12px; margin-top:12px; border:1px solid var(--gold);">
+  <div class="share-row">
+    <button onclick="shareImageNow()">اشتراک‌گذاری در اپ‌ها</button>
+    <button onclick="downloadImageNow()">دانلود مستقیم</button>
+  </div>
+</div></div>
+
+<!-- MATERIAL PICKER MODAL -->
+<div class="modal-bg" id="materialPickerModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('materialPickerModalBg')">×</button>
+  <h3>انتخاب ماده اولیه</h3>
+  <div id="materialPickerList" style="margin-top:10px;"></div>
+  <button class="fab secondary" onclick="closeModal('materialPickerModalBg'); quickAddMaterial();">+ ماده جدید بسازید</button>
+</div></div>
+
+<!-- COST PICKER MODAL -->
+<div class="modal-bg" id="costPickerModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('costPickerModalBg')">×</button>
+  <h3>انتخاب خدمت / هزینه</h3>
+  <div id="costPickerList" style="margin-top:10px;"></div>
+  <button class="fab secondary" onclick="closeModal('costPickerModalBg'); quickAddCost();">+ خدمت جدید بسازید</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ STORAGE HELPERS ============
+   Note: this file is meant to be wrapped into a real Android app
+   (see BUILD-APK-GUIDE.md). Inside such a WebView, localStorage
+   persists normally between app launches. */
+const DB_KEYS = ['materials','costs','groups','formulas','history','settings'];
+function dbGet(key, def){ try{ const v = localStorage.getItem('mc_'+key); return v?JSON.parse(v):def; }catch(e){ return def; } }
+function dbSet(key, val){ localStorage.setItem('mc_'+key, JSON.stringify(val)); }
+
+let DB = {
+  materials: dbGet('materials', []),
+  costs: dbGet('costs', []),
+  groups: dbGet('groups', ['عمومی']),
+  formulas: dbGet('formulas', []),
+  history: dbGet('history', []),
+  settings: dbGet('settings', {securityEnabled:false, method:'pass', passHash:'', patternHash:'', fingerprint:false, fpCredId:'', theme:'mavara'})
+};
+function saveDB(part){ dbSet(part, DB[part]); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+function applyTheme(theme){
+  const valid = ['mavara','sepahan','perspolis','aghaghia','ruhparvar'];
+  if(!valid.includes(theme)) theme='mavara';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeOptMavara')?.classList.toggle('active', theme==='mavara');
+  document.getElementById('themeOptSepahan')?.classList.toggle('active', theme==='sepahan');
+  document.getElementById('themeOptPerspolis')?.classList.toggle('active', theme==='perspolis');
+  document.getElementById('themeOptAghaghia')?.classList.toggle('active', theme==='aghaghia');
+  document.getElementById('themeOptRuhparvar')?.classList.toggle('active', theme==='ruhparvar');
+}
+function selectTheme(theme){
+  DB.settings.theme = theme; saveDB('settings');
+  applyTheme(theme);
+}
+applyTheme(DB.settings.theme || 'mavara');
+function fmt(n){ return Math.round(Number(n||0)).toLocaleString('en-US'); }
+function fmtKg(n){ return Number(n||0).toLocaleString('en-US', {maximumFractionDigits:3}); }
+function simpleHash(str){ let h=0; for(let i=0;i<str.length;i++){h=(h*31+str.charCodeAt(i))>>>0;} return h.toString(36); }
+
+/* ============ SPLASH ============ */
+window.addEventListener('load', ()=>{
+  let p=0;
+  const fill=document.getElementById('loadFill');
+  const iv=setInterval(()=>{
+    p+=Math.random()*18+6;
+    if(p>=100){p=100; clearInterval(iv); fill.style.width='100%';
+      setTimeout(()=>{
+        document.getElementById('splash').style.opacity='0';
+        setTimeout(()=>{ document.getElementById('splash').style.display='none'; startApp(); }, 480);
+      }, 250);
+    } else { fill.style.width=p+'%'; }
+  }, 140);
+});
+
+function startApp(){
+  document.getElementById('topbar').style.display='flex';
+  document.getElementById('bottomNav').classList.add('show');
+  if(DB.settings.securityEnabled){ showLock(); } else { nav('home', true); }
+}
+
+/* ============ LOCK ============ */
+let pinBuffer='';
+let patternSel=[];
+function showLock(){
+  const lock=document.getElementById('lock');
+  lock.classList.add('show');
+  if(DB.settings.method==='pattern'){
+    document.getElementById('lockPassMode').style.display='none';
+    document.getElementById('lockPatternMode').style.display='block';
+    buildPatternGrid('lockPatternGrid', onLockPatternComplete);
+  } else {
+    document.getElementById('lockPassMode').style.display='block';
+    document.getElementById('lockPatternMode').style.display='none';
+  }
+  document.getElementById('lockFpBtn').style.display = (DB.settings.fingerprint && DB.settings.fpCredId) ? 'block':'none';
+}
+function tryPassUnlock(){
+  const v=document.getElementById('lockPassInput').value;
+  if(simpleHash(v)===DB.settings.passHash && v.length>0){ unlockOk(); }
+  else{ document.getElementById('lockErr').textContent='رمز عبور اشتباه است'; }
+}
+function buildPatternGrid(elId, onComplete){
+  const grid=document.getElementById(elId);
+  grid.innerHTML='';
+  let sel=[];
+  for(let i=0;i<9;i++){
+    const d=document.createElement('div');
+    d.className='pattern-dot';
+    d.dataset.i=i;
+    d.onclick=()=>{
+      if(sel.includes(i))return;
+      sel.push(i); d.classList.add('active');
+      if(sel.length===9 || sel.length>=4){
+        // allow finishing after >=4 taps via a short delay, or when all used
+      }
+    };
+    grid.appendChild(d);
+  }
+  grid._getSel=()=>sel;
+  grid._reset=()=>{ sel=[]; [...grid.children].forEach(c=>c.classList.remove('active')); };
+  grid._onComplete=onComplete;
+  // finish button behavior: tap-and-hold not practical without drag; use "tap 4-9 dots then tap done"
+  const doneBtn=document.createElement('div');
+  doneBtn.style.cssText='grid-column:1/4; text-align:center; margin-top:10px;';
+  doneBtn.innerHTML='<button class="lock-btn" style="padding:8px 20px;">تایید الگو</button>';
+  doneBtn.querySelector('button').onclick=()=>{ if(sel.length>=4){ onComplete(sel.join('-')); } else { toast('حداقل 4 نقطه انتخاب کنید'); } };
+  grid.appendChild(doneBtn);
+}
+function onLockPatternComplete(patStr){
+  if(simpleHash(patStr)===DB.settings.patternHash){ unlockOk(); }
+  else{
+    document.getElementById('lockErr').textContent='الگو اشتباه است';
+    buildPatternGrid('lockPatternGrid', onLockPatternComplete);
+  }
+}
+function unlockOk(){
+  document.getElementById('lock').classList.remove('show');
+  document.getElementById('lockErr').textContent='';
+  nav('home', true);
+}
+function bufToBase64(buf){ return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+function base64ToBuf(b64){ const bin=atob(b64); const arr=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i); return arr; }
+function isCapacitorApp(){
+  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.NativeBiometric);
+}
+
+async function registerFingerprint(){
+  // Primary path: real native fingerprint via capacitor-native-biometric
+  if(isCapacitorApp()){
+    try{
+      const { NativeBiometric } = Capacitor.Plugins;
+      const result = await NativeBiometric.isAvailable();
+      if(!result.isAvailable){ toast('حسگر اثر انگشت روی این دستگاه در دسترس نیست'); return false; }
+      await NativeBiometric.setCredentials({
+        username: 'mellalchem-user',
+        password: 'mellalchem-unlock-key',
+        server: 'mellalchem.local'
+      });
+      DB.settings.fingerprint = true;
+      DB.settings.fpCredId = 'capacitor-native-biometric';
+      saveDB('settings');
+      toast('اثر انگشت با موفقیت فعال شد');
+      return true;
+    }catch(e){ toast('فعال‌سازی اثر انگشت ناموفق بود'); return false; }
+  }
+  // Fallback path (browser / PWA preview, no native plugin available): WebAuthn
+  if(!window.PublicKeyCredential){
+    toast('در این محیط (پیش‌نمایش/مرورگر) اثر انگشت واقعی در دسترس نیست؛ در نسخه‌ی نصبی روی گوشی با Capacitor فعال می‌شود');
+    return false;
+  }
+  try{
+    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if(!available){ toast('حسگر اثر انگشت روی این دستگاه/برنامه در دسترس نیست'); return false; }
+    const cred = await navigator.credentials.create({publicKey:{
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rp:{ name:'Mellal Chem' },
+      user:{ id: crypto.getRandomValues(new Uint8Array(16)), name:'mellalchem-user', displayName:'کاربر' },
+      pubKeyCredParams:[{type:'public-key', alg:-7}, {type:'public-key', alg:-257}],
+      authenticatorSelection:{ authenticatorAttachment:'platform', userVerification:'required' },
+      timeout:60000
+    }});
+    DB.settings.fpCredId = bufToBase64(cred.rawId);
+    DB.settings.fingerprint = true;
+    saveDB('settings');
+    toast('اثر انگشت با موفقیت ثبت شد');
+    return true;
+  }catch(e){ toast('ثبت اثر انگشت ناموفق بود: ' + (e.message||'پشتیبانی نمی‌شود')); return false; }
+}
+async function tryFingerprint(){
+  if(!DB.settings.fpCredId){ toast('اثر انگشت ثبت نشده — از تنظیمات وارد کنید'); return; }
+  if(DB.settings.fpCredId==='capacitor-native-biometric' && isCapacitorApp()){
+    try{
+      const { NativeBiometric } = Capacitor.Plugins;
+      await NativeBiometric.verifyIdentity({
+        reason: 'ورود به Mellal Chem',
+        title: 'تایید هویت',
+        subtitle: 'برای ورود، اثر انگشت خود را لمس کنید',
+        description: ''
+      });
+      unlockOk();
+    }catch(e){ toast('احراز هویت اثر انگشت ناموفق بود؛ رمز عبور یا الگو را وارد کنید'); }
+    return;
+  }
+  if(!window.PublicKeyCredential){ toast('اثر انگشت در این محیط در دسترس نیست'); return; }
+  try{
+    await navigator.credentials.get({publicKey:{
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials:[{ id: base64ToBuf(DB.settings.fpCredId), type:'public-key' }],
+      userVerification:'required',
+      timeout:60000
+    }});
+    unlockOk();
+  }catch(e){ toast('احراز هویت اثر انگشت ناموفق بود؛ رمز عبور یا الگو را وارد کنید'); }
+}
+
+/* ============ NAV ============ */
+const TITLES = {home:'Mellal Chem', materials:'مواد اولیه', costs:'هزینه‌های تولید', formulas:'فرمول‌ها',
+  formulaEditor:'فرمول جدید', produce:'دریافت فرمول تولید', backup:'پشتیبان‌گیری و بازیابی', settings:'تنظیمات', about:'درباره برنامه'};
+let currentScreen='home';
+function nav(name, isHome){
+  currentScreen=name;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('screenTitle').textContent=TITLES[name]||'Mellal Chem';
+  document.getElementById('backBtn').style.display = (name==='home')?'none':'flex';
+  const navTabFor = {home:'home', formulas:'formulas', formulaEditor:'formulas', produce:'produce', settings:'settings'};
+  const activeTab = navTabFor[name];
+  document.querySelectorAll('.bottomnav .nb').forEach(b=>b.classList.toggle('active', b.dataset.t===activeTab));
+  if(name==='materials') renderMaterials();
+  if(name==='costs') renderCosts();
+  if(name==='formulas') renderFormulas();
+  if(name==='produce') renderProduceScreen();
+  if(name==='settings') renderSettings();
+  if(name==='backup') listBackupFiles();
+  window.scrollTo(0,0);
+}
+function goHome(){ nav('home'); }
+
+/* ============ MATERIALS ============ */
+let editingMatId=null;
+function renderMaterials(){
+  const box=document.getElementById('materialsList');
+  if(DB.materials.length===0){ box.innerHTML='<div class="empty">هنوز ماده اولیه‌ای ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.materials.map(m=>`
+    <div class="card"><div class="card-row">
+      <div><div class="card-title">${m.name}${m.short?` <span class="pill">${m.short}</span>`:''}</div><div class="card-sub">${fmt(m.price)} تومان / کیلوگرم</div></div>
+      <div><button class="icon-btn edit" onclick="openMaterialModal('${m.id}')">✎</button><button class="icon-btn danger" onclick="delMaterial('${m.id}')">🗑</button></div>
+    </div></div>`).join('');
+}
+function openMaterialModal(id){
+  editingMatId=id||null;
+  document.getElementById('materialModalTitle').textContent = id?'ویرایش ماده اولیه':'ماده اولیه جدید';
+  if(id){ const m=DB.materials.find(x=>x.id===id); document.getElementById('matName').value=m.name; document.getElementById('matShort').value=m.short||''; document.getElementById('matPrice').value=m.price; }
+  else{ document.getElementById('matName').value=''; document.getElementById('matShort').value=''; document.getElementById('matPrice').value=''; }
+  document.getElementById('materialModalBg').classList.add('show');
+}
+function saveMaterial(){
+  const name=document.getElementById('matName').value.trim();
+  const short=document.getElementById('matShort').value.trim();
+  const price=parseFloat(document.getElementById('matPrice').value);
+  if(!name||isNaN(price)){ toast('نام و قیمت را وارد کنید'); return; }
+  let newId=editingMatId;
+  if(editingMatId){ const m=DB.materials.find(x=>x.id===editingMatId); m.name=name; m.short=short; m.price=price; }
+  else{ newId=uid(); DB.materials.push({id:newId, name, short, price}); }
+  saveDB('materials'); closeModal('materialModalBg'); renderMaterials(); toast('ذخیره شد');
+  if(currentScreen==='formulaEditor'){
+    if(!editingMatId && !(newId in currentFormulaMats)){ currentFormulaMats[newId]=''; }
+    renderFormulaMaterialsBox(); updateFormulaSum();
+  }
+}
+function delMaterial(id){ DB.materials=DB.materials.filter(x=>x.id!==id); saveDB('materials'); renderMaterials(); toast('حذف شد'); }
+
+/* ============ COSTS ============ */
+let editingCostId=null;
+function renderCosts(){
+  const box=document.getElementById('costsList');
+  if(DB.costs.length===0){ box.innerHTML='<div class="empty">هنوز هزینه‌ای ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.costs.map(c=>`
+    <div class="card"><div class="card-row">
+      <div><div class="card-title">${c.name}</div><div class="card-sub">${fmt(c.amount)} تومان — ${c.type==='perkg'?'به ازای هر کیلوگرم':'به ازای هر بار تولید'}</div></div>
+      <div><button class="icon-btn edit" onclick="openCostModal('${c.id}')">✎</button><button class="icon-btn danger" onclick="delCost('${c.id}')">🗑</button></div>
+    </div></div>`).join('');
+}
+function openCostModal(id){
+  editingCostId=id||null;
+  document.getElementById('costModalTitle').textContent = id?'ویرایش هزینه تولید':'هزینه تولید جدید';
+  if(id){ const c=DB.costs.find(x=>x.id===id); document.getElementById('costName').value=c.name; document.getElementById('costType').value=c.type; document.getElementById('costAmount').value=c.amount; }
+  else{ document.getElementById('costName').value=''; document.getElementById('costType').value='perkg'; document.getElementById('costAmount').value=''; }
+  document.getElementById('costModalBg').classList.add('show');
+}
+function saveCost(){
+  const name=document.getElementById('costName').value.trim();
+  const type=document.getElementById('costType').value;
+  const amount=parseFloat(document.getElementById('costAmount').value);
+  if(!name||isNaN(amount)){ toast('همه فیلدها را کامل کنید'); return; }
+  let newId=editingCostId;
+  if(editingCostId){ const c=DB.costs.find(x=>x.id===editingCostId); c.name=name; c.type=type; c.amount=amount; }
+  else{ newId=uid(); DB.costs.push({id:newId, name, type, amount}); }
+  saveDB('costs'); closeModal('costModalBg'); renderCosts(); toast('ذخیره شد');
+  if(currentScreen==='formulaEditor'){
+    if(!editingCostId && !currentFormulaCosts.includes(newId)){ currentFormulaCosts.push(newId); }
+    renderFormulaCostsBox();
+  }
+}
+function delCost(id){ DB.costs=DB.costs.filter(x=>x.id!==id); saveDB('costs'); renderCosts(); toast('حذف شد'); }
+
+/* ============ GROUPS ============ */
+function renderGroupList(){
+  document.getElementById('groupList').innerHTML = DB.groups.map((g,i)=>`
+    <div class="matline"><div class="mname">${g}</div>
+      ${DB.groups.length>1?`<button class="icon-btn danger" onclick="delGroup(${i})">🗑</button>`:''}
+    </div>`).join('');
+}
+function openGroupModal(){ renderGroupList(); document.getElementById('groupModalBg').classList.add('show'); }
+function addGroup(){
+  const v=document.getElementById('newGroupName').value.trim();
+  if(!v){ return; }
+  if(DB.groups.includes(v)){ toast('این گروه از قبل وجود دارد'); return; }
+  DB.groups.push(v); saveDB('groups'); document.getElementById('newGroupName').value=''; renderGroupList();
+}
+function delGroup(i){ DB.groups.splice(i,1); saveDB('groups'); renderGroupList(); }
+
+/* ============ FORMULAS ============ */
+function renderFormulas(){
+  const box=document.getElementById('formulasList');
+  if(DB.formulas.length===0){ box.innerHTML='<div class="empty">هنوز فرمولی ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.formulas.map(f=>`
+    <div class="card"><div class="card-row">
+      <div><div class="card-title">${f.name}</div><div class="card-sub">گروه: ${f.group} — ${fmt(f.batchKg)} کیلوگرم</div></div>
+      <div><button class="icon-btn edit" onclick="openFormulaEditor('${f.id}')">✎</button><button class="icon-btn danger" onclick="delFormula('${f.id}')">🗑</button></div>
+    </div></div>`).join('');
+}
+function delFormula(id){ DB.formulas=DB.formulas.filter(x=>x.id!==id); saveDB('formulas'); renderFormulas(); toast('حذف شد'); }
+
+let editingFormulaId=null;
+let currentFormulaMats={};   // materialId -> kg (string)
+let currentFormulaCosts=[];  // array of costIds
+
+function renderFormulaMaterialsBox(){
+  const matBox=document.getElementById('fMaterialsBox');
+  const ids=Object.keys(currentFormulaMats);
+  if(ids.length===0){ matBox.innerHTML='<div class="hint">هنوز ماده‌ای اضافه نشده — از دکمه‌ی «+ افزودن ماده» بالا استفاده کنید.</div>'; return; }
+  matBox.innerHTML = ids.map(id=>{
+    const m=DB.materials.find(x=>x.id===id);
+    if(!m) return '';
+    return `<div class="matline"><div class="mname">${m.name}</div><input type="number" step="0.01" class="fmat" data-id="${id}" placeholder="کیلوگرم" value="${currentFormulaMats[id]}" oninput="updateFormulaMatValue('${id}', this.value)"><button class="icon-btn danger" onclick="removeFormulaMaterial('${id}')">🗑</button></div>`;
+  }).join('');
+}
+function updateFormulaMatValue(id, val){ currentFormulaMats[id]=val; updateFormulaSum(); }
+function removeFormulaMaterial(id){ delete currentFormulaMats[id]; renderFormulaMaterialsBox(); updateFormulaSum(); }
+function openMaterialPicker(){
+  const box=document.getElementById('materialPickerList');
+  const available=DB.materials.filter(m=>!(m.id in currentFormulaMats));
+  if(DB.materials.length===0){ box.innerHTML='<div class="hint">هنوز ماده‌ای ثبت نشده است.</div>'; }
+  else if(available.length===0){ box.innerHTML='<div class="hint">همه‌ی مواد ثبت‌شده به این فرمول اضافه شده‌اند.</div>'; }
+  else{
+    box.innerHTML = available.map(m=>`
+      <div class="matline" style="cursor:pointer;" onclick="pickMaterial('${m.id}')"><div class="mname">${m.name}</div><span class="pill">${fmt(m.price)} ت/kg</span></div>`).join('');
+  }
+  document.getElementById('materialPickerModalBg').classList.add('show');
+}
+function pickMaterial(id){
+  currentFormulaMats[id]='';
+  closeModal('materialPickerModalBg');
+  renderFormulaMaterialsBox();
+  updateFormulaSum();
+}
+
+function renderFormulaCostsBox(){
+  const costBox=document.getElementById('fCostsBox');
+  if(currentFormulaCosts.length===0){ costBox.innerHTML='<div class="hint">هنوز خدمتی اضافه نشده — از دکمه‌ی «+ افزودن خدمت» بالا استفاده کنید.</div>'; return; }
+  costBox.innerHTML = currentFormulaCosts.map(id=>{
+    const c=DB.costs.find(x=>x.id===id);
+    if(!c) return '';
+    return `<div class="matline"><div class="mname">${c.name} (${c.type==='perkg'?'هر کیلو':'هر بار تولید'})</div><button class="icon-btn danger" onclick="removeFormulaCost('${id}')">🗑</button></div>`;
+  }).join('');
+}
+function removeFormulaCost(id){ currentFormulaCosts=currentFormulaCosts.filter(x=>x!==id); renderFormulaCostsBox(); }
+function openCostPicker(){
+  const box=document.getElementById('costPickerList');
+  const available=DB.costs.filter(c=>!currentFormulaCosts.includes(c.id));
+  if(DB.costs.length===0){ box.innerHTML='<div class="hint">هنوز خدمتی ثبت نشده است.</div>'; }
+  else if(available.length===0){ box.innerHTML='<div class="hint">همه‌ی خدمات ثبت‌شده به این فرمول اضافه شده‌اند.</div>'; }
+  else{
+    box.innerHTML = available.map(c=>`
+      <div class="matline" style="cursor:pointer;" onclick="pickCost('${c.id}')"><div class="mname">${c.name}</div><span class="pill">${c.type==='perkg'?'هر کیلو':'هر بار تولید'}</span></div>`).join('');
+  }
+  document.getElementById('costPickerModalBg').classList.add('show');
+}
+function pickCost(id){
+  currentFormulaCosts.push(id);
+  closeModal('costPickerModalBg');
+  renderFormulaCostsBox();
+}
+
+function quickAddMaterial(){ openMaterialModal(); }
+function quickAddCost(){ openCostModal(); }
+function openFormulaEditor(id){
+  editingFormulaId=id||null;
+  const gSel=document.getElementById('fGroup');
+  gSel.innerHTML = DB.groups.map(g=>`<option value="${g}">${g}</option>`).join('');
+  currentFormulaMats={}; currentFormulaCosts=[];
+  if(id){
+    const f=DB.formulas.find(x=>x.id===id);
+    document.getElementById('fName').value=f.name;
+    gSel.value=f.group;
+    document.getElementById('fBatchKg').value=f.batchKg;
+    f.materials.forEach(fm=>{ currentFormulaMats[fm.materialId]=fm.kg; });
+    currentFormulaCosts=[...(f.costIds||[])];
+    document.getElementById('fDefaultMargin').value = f.defaultMargin||0;
+    document.getElementById('fDefaultMonths').value = f.defaultMonths||0;
+    document.getElementById('fDefaultFee').value = f.defaultFee||0;
+  } else {
+    document.getElementById('fName').value=''; document.getElementById('fBatchKg').value='';
+    document.getElementById('fDefaultMargin').value=0;
+    document.getElementById('fDefaultMonths').value=0;
+    document.getElementById('fDefaultFee').value=0;
+  }
+  renderFormulaMaterialsBox();
+  renderFormulaCostsBox();
+  nav('formulaEditor');
+  updateFormulaSum();
+}
+function updateFormulaSum(){
+  const batchKg=parseFloat(document.getElementById('fBatchKg').value)||0;
+  let sum=0;
+  Object.values(currentFormulaMats).forEach(v=>{ sum+=parseFloat(v)||0; });
+  const box=document.getElementById('fSumBox');
+  const diff = (batchKg - sum);
+  box.className='sum-box ' + (Math.abs(diff)<0.001 && batchKg>0 ? 'ok':'warn');
+  box.innerHTML = `<span>جمع مواد: ${fmtKg(sum)} کیلوگرم</span><span>${batchKg>0 ? (Math.abs(diff)<0.001 ? '✔ مطابق فرمول' : 'اختلاف: '+fmtKg(diff)+' کیلوگرم') : 'میزان فرمول را وارد کنید'}</span>`;
+}
+function saveFormula(){
+  const name=document.getElementById('fName').value.trim();
+  const group=document.getElementById('fGroup').value;
+  const batchKg=parseFloat(document.getElementById('fBatchKg').value);
+  if(!name||!batchKg){ toast('نام و میزان فرمول را وارد کنید'); return; }
+  const materials=[];
+  let sum=0;
+  Object.keys(currentFormulaMats).forEach(id=>{
+    const v=parseFloat(currentFormulaMats[id]);
+    if(v>0){ materials.push({materialId:id, kg:v}); sum+=v; }
+  });
+  if(materials.length===0){ toast('حداقل یک ماده اولیه اضافه کنید'); return; }
+  if(Math.abs(sum-batchKg)>0.001){ toast('جمع مواد باید دقیقاً برابر میزان فرمول باشد'); return; }
+  const costIds=[...currentFormulaCosts];
+  const defaultMargin=parseFloat(document.getElementById('fDefaultMargin').value)||0;
+  const defaultMonths=parseFloat(document.getElementById('fDefaultMonths').value)||0;
+  const defaultFee=parseFloat(document.getElementById('fDefaultFee').value)||0;
+  if(editingFormulaId){
+    const f=DB.formulas.find(x=>x.id===editingFormulaId);
+    Object.assign(f, {name, group, batchKg, materials, costIds, defaultMargin, defaultMonths, defaultFee});
+  } else {
+    DB.formulas.push({id:uid(), name, group, batchKg, materials, costIds, defaultMargin, defaultMonths, defaultFee});
+  }
+  saveDB('formulas'); toast('فرمول ذخیره شد'); nav('formulas');
+}
+
+/* ============ PRODUCE / CALCULATE ============ */
+function renderProduceScreen(){
+  const sel=document.getElementById('pFormula');
+  sel.innerHTML = DB.formulas.map(f=>`<option value="${f.id}">${f.name} (${f.group})</option>`).join('');
+  document.getElementById('pQty').value='';
+  document.getElementById('produceTable1').innerHTML='';
+  document.getElementById('produceTable2').innerHTML='';
+  document.getElementById('profitBox').style.display='none';
+  renderProduceInfo();
+}
+function renderProduceInfo(){
+  const f=DB.formulas.find(x=>x.id===document.getElementById('pFormula').value);
+  document.getElementById('pFormulaInfo').textContent = f ? `این فرمول برای ${fmt(f.batchKg)} کیلوگرم تعریف شده است.` : 'ابتدا یک فرمول در بخش «فرمول‌ها» تعریف کنید.';
+  document.getElementById('marginInput').value = f ? (f.defaultMargin||0) : 0;
+  document.getElementById('monthsInput').value = f ? (f.defaultMonths||0) : 0;
+  document.getElementById('feeInput').value = f ? (f.defaultFee||0) : 0;
+  calcProduce();
+}
+let lastProduceResult=null;
+function calcProduce(){
+  const f=DB.formulas.find(x=>x.id===document.getElementById('pFormula').value);
+  const qty=parseFloat(document.getElementById('pQty').value);
+  const t1=document.getElementById('produceTable1');
+  const t2=document.getElementById('produceTable2');
+  const profitBox=document.getElementById('profitBox');
+  if(!f || !qty || qty<=0){ t1.innerHTML=''; t2.innerHTML=''; profitBox.style.display='none'; lastProduceResult=null; return; }
+  const factor=qty/f.batchKg;
+  let matLines=[], matTotal=0;
+  f.materials.forEach(fm=>{
+    const m=DB.materials.find(x=>x.id===fm.materialId);
+    if(!m) return;
+    const kg=fm.kg*factor;
+    const cost=kg*m.price;
+    matTotal+=cost;
+    matLines.push({name:m.name, short:m.short, kg, price:m.price, cost});
+  });
+  let costLines=[], costTotal=0;
+  (f.costIds||[]).forEach(cid=>{
+    const c=DB.costs.find(x=>x.id===cid);
+    if(!c) return;
+    const val = c.type==='perkg' ? c.amount*qty : c.amount*factor;
+    costTotal+=val;
+    costLines.push({name:c.name, val});
+  });
+  const total=matTotal+costTotal;
+  lastProduceResult={formula:f, qty, matLines, costLines, total, perKg: total/qty};
+
+  // Table 1: material quantities only (shareable)
+  t1.innerHTML = `
+    <div class="card">
+      <div class="card-title" style="margin-bottom:8px;">میزان مواد اولیه — ${f.name} (${fmtKg(qty)} kg)</div>
+      <table class="data-table"><thead><tr><th>ماده اولیه</th><th class="num">میزان (kg)</th></tr></thead><tbody>
+        ${matLines.map(l=>`<tr><td>${l.name}</td><td class="num">${fmtKg(l.kg)}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="share-row">
+        <button onclick="shareAsText()">اشتراک‌گذاری متنی</button>
+        <button onclick="shareAsImage()">اشتراک‌گذاری تصویری</button>
+      </div>
+    </div>`;
+
+  // Table 2: prices & total cost (not shareable)
+  t2.innerHTML = `
+    <div class="card">
+      <div class="card-title" style="margin-bottom:8px;">قیمت تمام‌شده</div>
+      <table class="data-table"><thead><tr><th>ماده / هزینه</th><th class="num">قیمت (تومان)</th></tr></thead><tbody>
+        ${matLines.map(l=>`<tr><td>${l.name}</td><td class="num">${fmt(l.cost)}</td></tr>`).join('')}
+        ${costLines.map(l=>`<tr><td>${l.name}</td><td class="num">${fmt(l.val)}</td></tr>`).join('')}
+        <tr class="table-total-row"><td>قیمت تمام‌شده کل</td><td class="num">${fmt(total)}</td></tr>
+        <tr class="table-total-row"><td>قیمت تمام‌شده هر کیلوگرم</td><td class="num">${fmt(total/qty)}</td></tr>
+      </tbody></table>
+    </div>`;
+
+  profitBox.style.display='block';
+  renderProfitTable();
+
+  // log history
+  DB.history.unshift({id:uid(), date:new Date().toISOString(), formula:f.name, qty, total});
+  DB.history=DB.history.slice(0,200);
+  saveDB('history');
+}
+
+function renderProfitTable(){
+  if(!lastProduceResult){ document.getElementById('produceTable3').innerHTML=''; return; }
+  const r=lastProduceResult;
+  const marginPerKg=parseFloat(document.getElementById('marginInput').value)||0;
+  const months=Math.max(0, Math.round(parseFloat(document.getElementById('monthsInput').value)||0));
+  const fee=parseFloat(document.getElementById('feeInput').value)||0;
+
+  const totalMargin = marginPerKg * r.qty;
+  const cashPrice = r.total + totalMargin;
+  const cashPricePerKg = cashPrice / r.qty;
+
+  let rows = `
+    <tr><td>قیمت تمام‌شده (بدون سود)</td><td class="num">${fmt(r.total)}</td><td class="num">${fmt(r.perKg)}</td></tr>
+    <tr class="table-total-row"><td>نقدی (قیمت تمام‌شده + حاشیه سود)</td><td class="num">${fmt(cashPrice)}</td><td class="num">${fmt(cashPricePerKg)}</td></tr>`;
+
+  if(months>0){
+    let running = cashPrice;
+    for(let m=1; m<=months; m++){
+      running = running * (1 + fee/100);
+      const perKg = running / r.qty;
+      const isLast = m===months;
+      rows += `<tr${isLast?' class="table-total-row"':''}><td>ماه ${m}</td><td class="num">${fmt(running)}</td><td class="num">${fmt(perKg)}</td></tr>`;
+    }
+  }
+
+  document.getElementById('produceTable3').innerHTML = `
+    <table class="data-table"><thead><tr><th>عنوان</th><th class="num">مبلغ کل (تومان)</th><th class="num">هر کیلوگرم</th></tr></thead><tbody>
+      ${rows}
+    </tbody></table>`;
+}
+
+function buildShareText(){
+  if(!lastProduceResult) return '';
+  const r=lastProduceResult;
+  let t = `MellalChem.ir\n-------------\n`;
+  r.matLines.forEach(l=>{
+    t += `${l.short||l.name} : ${fmtKg(l.kg)}\n`;
+  });
+  t += `-------------\nSum : ${fmtKg(r.qty)} Kg`;
+  return t;
+}
+function isCapacitorShare(){
+  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.Share);
+}
+function blobToBase64(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onloadend=()=>{ resolve(reader.result.split(',')[1]); };
+    reader.onerror=reject;
+    reader.readAsDataURL(blob);
+  });
+}
+async function shareAsText(){
+  const text=buildShareText();
+  if(!text){ toast('ابتدا میزان تولید را وارد کنید'); return; }
+  if(isCapacitorShare()){
+    try{
+      const { Share } = Capacitor.Plugins;
+      await Share.share({ title:'فرمول تولید', text, dialogTitle:'اشتراک‌گذاری فرمول' });
+      return;
+    }catch(e){ if(e && (''+e.message).toLowerCase().includes('cancel')) return; toast('اشتراک‌گذاری انجام نشد'); return; }
+  }
+  if(navigator.share){
+    try{ await navigator.share({title:'Mellal Chem', text}); return; }catch(e){ if(e.name==='AbortError') return; }
+  }
+  if(navigator.clipboard){ navigator.clipboard.writeText(text); toast('پنجره اشتراک‌گذاری در دسترس نیست؛ متن در کلیپ‌بورد کپی شد'); }
+  else{ toast('اشتراک‌گذاری در این نسخه از برنامه پشتیبانی نمی‌شود'); }
+}
+let _lastShareBlob=null;
+let _shareTemplateImg=null;
+function loadShareTemplate(){
+  return new Promise((resolve)=>{
+    if(_shareTemplateImg){ resolve(_shareTemplateImg); return; }
+    const img=new Image();
+    img.onload=()=>{ _shareTemplateImg=img; resolve(img); };
+    img.onerror=()=>resolve(null);
+    img.src='assets/share-template.jpg';
+  });
+}
+async function shareAsImage(){
+  if(!lastProduceResult){ toast('ابتدا میزان تولید را وارد کنید'); return; }
+  const r=lastProduceResult;
+  const tpl = await loadShareTemplate();
+
+  let cv, ctx, W, H;
+  if(tpl){
+    W=tpl.width; H=tpl.height;
+    cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    ctx=cv.getContext('2d');
+    ctx.drawImage(tpl, 0, 0, W, H);
+
+    // White card region inside the template (measured on the source image)
+    const cardX = W*0.1552, cardY = H*0.2213, cardW = W*(0.8352-0.1552), cardH = H*(0.8828-0.2213);
+    const pad = cardW*0.09;
+    let y = cardY + pad + 6;
+
+    ctx.direction='ltr'; ctx.textAlign='left'; ctx.fillStyle='#12331f';
+    const nameFontSize = Math.round(cardW*0.075);
+    ctx.font = `bold ${nameFontSize}px sans-serif`;
+    ctx.fillText(r.formula.name, cardX+pad, y+nameFontSize*0.8, cardW-2*pad);
+    y += nameFontSize*1.5;
+
+    ctx.font = `${Math.round(cardW*0.05)}px sans-serif`;
+    ctx.fillStyle='#5a6a5c';
+    ctx.fillText(`Qty: ${fmtKg(r.qty)} Kg`, cardX+pad, y+cardW*0.045);
+    y += cardW*0.11;
+
+    ctx.strokeStyle='#c8d6c9'; ctx.beginPath(); ctx.moveTo(cardX+pad, y); ctx.lineTo(cardX+cardW-pad, y); ctx.stroke();
+    y += cardW*0.08;
+
+    const lineFontSize = Math.round(cardW*0.06);
+    const lineGap = lineFontSize*1.9;
+    ctx.font = `${lineFontSize}px sans-serif`;
+    r.matLines.forEach(l=>{
+      ctx.fillStyle='#1f3d26';
+      ctx.fillText(l.short||l.name, cardX+pad, y);
+      ctx.textAlign='right'; ctx.fillStyle='#2ecc71';
+      ctx.font = `bold ${lineFontSize}px sans-serif`;
+      ctx.fillText(fmtKg(l.kg), cardX+cardW-pad, y);
+      ctx.textAlign='left'; ctx.font = `${lineFontSize}px sans-serif`;
+      y += lineGap;
+    });
+
+    y += cardW*0.05;
+    ctx.strokeStyle='#c8d6c9'; ctx.beginPath(); ctx.moveTo(cardX+pad, y); ctx.lineTo(cardX+cardW-pad, y); ctx.stroke();
+    y += lineGap;
+
+    ctx.font = `bold ${Math.round(cardW*0.075)}px sans-serif`;
+    ctx.fillStyle='#12331f';
+    ctx.fillText('Sum', cardX+pad, y);
+    ctx.textAlign='right'; ctx.fillStyle='#1f8a4c';
+    ctx.fillText(`${fmtKg(r.qty)} Kg`, cardX+cardW-pad, y);
+  } else {
+    // Fallback: theme-colored card if the template image failed to load
+    const cs=getComputedStyle(document.documentElement);
+    const cBg=cs.getPropertyValue('--bg').trim()||'#0f2136';
+    const cGold=cs.getPropertyValue('--gold').trim()||'#d4af37';
+    const cGold2=cs.getPropertyValue('--gold-2').trim()||'#e9c968';
+    const cText=cs.getPropertyValue('--text').trim()||'#f2ede2';
+    const cTextDim=cs.getPropertyValue('--text-dim').trim()||'#a9b7cc';
+    const lineH=34;
+    W=720; H=200 + r.matLines.length*lineH + 40;
+    cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    ctx=cv.getContext('2d');
+    ctx.fillStyle=cBg; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=cGold; ctx.lineWidth=3; ctx.strokeRect(6,6,W-12,H-12);
+    ctx.direction='rtl'; ctx.textAlign='right'; ctx.fillStyle=cGold2;
+    ctx.font='bold 26px sans-serif'; ctx.fillText('Mellal Chem', W-30, 50);
+    ctx.font='20px sans-serif'; ctx.fillStyle=cText;
+    ctx.fillText(`فرمول: ${r.formula.name}`, W-30, 90);
+    ctx.fillText(`میزان تولید: ${fmtKg(r.qty)} کیلوگرم`, W-30, 122);
+    let y=165;
+    ctx.font='17px sans-serif'; ctx.fillStyle=cTextDim;
+    ctx.fillText('میزان مواد اولیه:', W-30, y); y+=lineH;
+    ctx.fillStyle=cText;
+    r.matLines.forEach(l=>{ ctx.fillText(`${l.short||l.name}: ${fmtKg(l.kg)} kg`, W-30, y); y+=lineH; });
+  }
+
+  document.getElementById('shareImagePreview').src = cv.toDataURL('image/png');
+  document.getElementById('shareImageModalBg').classList.add('show');
+  cv.toBlob(blob=>{ _lastShareBlob=blob; }, 'image/png');
+}
+async function ensureFsPermission(){
+  if(!isCapacitorFS()) return;
+  try{
+    const { Filesystem } = Capacitor.Plugins;
+    if(Filesystem.requestPermissions){ await Filesystem.requestPermissions(); }
+  }catch(e){ /* older Android/scoped storage doesn't need this — ignore */ }
+}
+async function shareImageNow(){
+  if(!_lastShareBlob){ toast('ابتدا صبر کنید تصویر آماده شود'); return; }
+  if(isCapacitorShare() && isCapacitorFS()){
+    try{
+      await ensureFsPermission();
+      const { Filesystem, Share } = Capacitor.Plugins;
+      const base64Data = await blobToBase64(_lastShareBlob);
+      const filename = 'mellal-chem-share-'+Date.now()+'.png';
+      await Filesystem.writeFile({ path: filename, data: base64Data, directory:'CACHE' });
+      const uriResult = await Filesystem.getUri({ path: filename, directory:'CACHE' });
+      await Share.share({ title:'فرمول تولید', files:[uriResult.uri], dialogTitle:'اشتراک‌گذاری تصویر' });
+      return;
+    }catch(e){ toast('اشتراک‌گذاری تصویر انجام نشد؛ از نگه‌داشتن روی تصویر استفاده کنید'); return; }
+  }
+  const file=new File([_lastShareBlob], 'mellal-chem.png', {type:'image/png'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file], title:'Mellal Chem'}); return; }catch(e){ if(e.name==='AbortError') return; }
+  }
+  toast('اشتراک‌گذاری در این نسخه از برنامه در دسترس نیست؛ از نگه‌داشتن روی تصویر استفاده کنید');
+}
+function downloadImageNow(){
+  if(!_lastShareBlob){ toast('ابتدا صبر کنید تصویر آماده شود'); return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(_lastShareBlob); a.download='mellal-chem.png'; a.click();
+}
+
+/* ============ BACKUP / RESTORE ============ */
+function buildBackupData(){
+  return {materials:DB.materials, costs:DB.costs, groups:DB.groups, formulas:DB.formulas, history:DB.history, settings:{...DB.settings}};
+}
+function isCapacitorFS(){
+  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem);
+}
+async function sha256Hex(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUnicode(str){ return decodeURIComponent(escape(atob(str))); }
+
+// Builds the encoded+hashed backup file content: base64( {v, hash(sha256 of raw json), data: base64(raw json)} )
+async function buildBackupFileContent(){
+  const rawJson = JSON.stringify(buildBackupData());
+  const hash = await sha256Hex(rawJson);
+  const payload = { v:1, hash, data: b64EncodeUnicode(rawJson) };
+  return b64EncodeUnicode(JSON.stringify(payload));
+}
+
+async function doBackup(){
+  const fileContent = await buildBackupFileContent();
+  const filename='mellal-chem-backup-'+new Date().toISOString().slice(0,10)+'.mcb';
+
+  if(isCapacitorFS()){
+    await ensureFsPermission();
+    const { Filesystem } = Capacitor.Plugins;
+    // Best-effort copy into Documents so it shows up in the in-app "بازیابی از حافظه گوشی" list
+    try{ await Filesystem.writeFile({ path: filename, data: fileContent, directory: 'DOCUMENTS' }); }catch(e){}
+
+    // Reliable path: write to app cache, then open the native Android share sheet
+    // so the user can pick exactly where to save it (Files, Drive, Telegram Saved Messages, etc.)
+    try{
+      await Filesystem.writeFile({ path: filename, data: fileContent, directory:'CACHE' });
+      const uriResult = await Filesystem.getUri({ path: filename, directory:'CACHE' });
+      if(isCapacitorShare()){
+        const { Share } = Capacitor.Plugins;
+        await Share.share({ title:'فایل پشتیبان Mellal Chem', files:[uriResult.uri], dialogTitle:'ذخیره یا اشتراک‌گذاری فایل پشتیبان' });
+        return;
+      }
+    }catch(e){ toast('ذخیره‌سازی ناموفق بود: '+(e.message||'خطای نامشخص')); return; }
+  }
+  // Browser / non-native fallback
+  const blob=new Blob([fileContent], {type:'text/plain'});
+  const file=new File([blob], filename, {type:'text/plain'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file], title:'Mellal Chem Backup'}); return; }catch(e){ if(e.name==='AbortError') return; }
+  }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click();
+  toast('اگر فایلی ذخیره نشد، از گزینه‌ی «نمایش و کپی متن پشتیبان» استفاده کنید');
+}
+
+async function showBackupText(){
+  document.getElementById('backupTextArea').value = await buildBackupFileContent();
+  document.getElementById('backupTextModalBg').classList.add('show');
+}
+async function copyBackupText(){
+  const ta=document.getElementById('backupTextArea');
+  ta.select();
+  try{
+    if(navigator.clipboard){ await navigator.clipboard.writeText(ta.value); }
+    else{ document.execCommand('copy'); }
+    toast('متن پشتیبان کپی شد');
+  }catch(e){
+    try{ document.execCommand('copy'); toast('متن پشتیبان کپی شد'); }
+    catch(e2){ toast('کپی خودکار ممکن نشد؛ متن را دستی انتخاب و کپی کنید'); }
+  }
+}
+
+// Lists .mcb backup files saved in the phone's Documents folder (native only)
+async function listBackupFiles(){
+  const box=document.getElementById('backupFileList');
+  if(!isCapacitorFS()){ box.innerHTML='<div class="hint">این قابلیت فقط در نسخه‌ی نصبی روی گوشی در دسترس است.</div>'; return; }
+  try{
+    await ensureFsPermission();
+    const { Filesystem } = Capacitor.Plugins;
+    const res = await Filesystem.readdir({ path:'', directory:'DOCUMENTS' });
+    const files = (res.files||[]).map(f=>typeof f==='string'?f:f.name).filter(n=>n && n.startsWith('mellal-chem-backup-') && n.endsWith('.mcb')).sort().reverse();
+    if(!files.length){ box.innerHTML='<div class="hint">فایل پشتیبانی در Documents پیدا نشد.</div>'; return; }
+    box.innerHTML = files.map(f=>`
+      <div class="matline"><div class="mname">${f}</div><button class="icon-btn edit" onclick="restoreFromFilesystem('${f}')">بازیابی</button></div>`).join('');
+  }catch(e){ box.innerHTML='<div class="hint">خواندن لیست فایل‌ها ناموفق بود.</div>'; }
+}
+async function restoreFromFilesystem(filename){
+  try{
+    await ensureFsPermission();
+    const { Filesystem } = Capacitor.Plugins;
+    const res = await Filesystem.readFile({ path: filename, directory:'DOCUMENTS' });
+    await restoreFromRawFileText(res.data);
+  }catch(e){ toast('خواندن فایل پشتیبان ناموفق بود'); }
+}
+
+// Verifies the hash and applies the backup; falls back to older plain-JSON backups for compatibility
+async function restoreFromRawFileText(rawText){
+  // Long single-line base64 sometimes gets whitespace/line-breaks injected by
+  // chat apps (Telegram/WhatsApp) during copy-paste — strip that before decoding.
+  const text = (rawText||'').replace(/\s+/g, '');
+  try{
+    const payload = JSON.parse(b64DecodeUnicode(text));
+    if(payload && payload.data && payload.hash){
+      const rawJson = b64DecodeUnicode(payload.data);
+      const checkHash = await sha256Hex(rawJson);
+      if(checkHash !== payload.hash){ toast('فایل پشتیبان دستکاری یا خراب شده است'); return; }
+      applyRestoredData(JSON.parse(rawJson));
+      return;
+    }
+  }catch(e){ /* not the new encoded format — fall through to legacy plain JSON */ }
+  try{ applyRestoredData(JSON.parse(text)); return; }
+  catch(err){}
+  try{ applyRestoredData(JSON.parse(rawText)); return; }
+  catch(err){
+    toast('متن پشتیبان ناقص یا خراب است — احتمالاً هنگام کپی/پیست از یک اپ پیام‌رسان بخشی از متن جا افتاده. لطفاً کل متن را کامل کپی و پیست کنید، یا از گزینه‌ی «بازیابی از حافظه گوشی» استفاده کنید.');
+  }
+}
+
+const DEFAULT_SETTINGS = {securityEnabled:false, method:'pass', passHash:'', patternHash:'', fingerprint:false, fpCredId:'', theme:'mavara'};
+
+// Fills in any fields missing from an older backup file with safe defaults,
+// so backups made by earlier versions of the app can still be restored fully.
+function normalizeRestoredData(data){
+  const out = {};
+  out.materials = (data.materials||[]).map(m=>({
+    id: m.id || uid(),
+    name: m.name || '',
+    short: m.short || '',
+    price: (typeof m.price==='number') ? m.price : (parseFloat(m.price)||0)
+  }));
+  out.costs = (data.costs||[]).map(c=>({
+    id: c.id || uid(),
+    name: c.name || '',
+    type: c.type || 'perkg',
+    amount: (typeof c.amount==='number') ? c.amount : (parseFloat(c.amount)||0)
+  }));
+  out.groups = (data.groups && data.groups.length) ? data.groups : ['عمومی'];
+  out.formulas = (data.formulas||[]).map(f=>({
+    id: f.id || uid(),
+    name: f.name || '',
+    group: f.group || out.groups[0],
+    batchKg: (typeof f.batchKg==='number') ? f.batchKg : (parseFloat(f.batchKg)||0),
+    materials: f.materials || [],
+    costIds: f.costIds || [],
+    defaultMargin: f.defaultMargin || 0,
+    defaultMonths: f.defaultMonths || 0,
+    defaultFee: f.defaultFee || 0
+  }));
+  out.history = data.history || [];
+  out.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings||{});
+  return out;
+}
+function applyRestoredData(data){
+  const normalized = normalizeRestoredData(data);
+  DB_KEYS.forEach(k=>{ DB[k]=normalized[k]; saveDB(k); });
+  const ta=document.getElementById('restoreText'); if(ta) ta.value='';
+  const fi=document.getElementById('restoreFile'); if(fi) fi.value='';
+  toast('بازیابی با موفقیت انجام شد (فیلدهای جدید با مقدار پیش‌فرض پر شدند)');
+  nav('home');
+}
+function doRestore(){
+  const inp=document.getElementById('restoreFile');
+  if(!inp.files[0]){ toast('فایل را انتخاب کنید یا از «بازیابی از متن» استفاده کنید'); return; }
+  const reader=new FileReader();
+  reader.onload=(e)=>{ restoreFromRawFileText(e.target.result); };
+  reader.readAsText(inp.files[0]);
+}
+function doRestoreFromText(){
+  const raw=document.getElementById('restoreText').value.trim();
+  if(!raw){ toast('متن پشتیبان را بچسبانید'); return; }
+  restoreFromRawFileText(raw);
+}
+
+/* ============ SETTINGS / SECURITY ============ */
+function renderSettings(){
+  applyTheme(DB.settings.theme || 'mavara');
+  document.getElementById('secEnabled').checked = DB.settings.securityEnabled;
+  document.getElementById('secDetails').style.display = DB.settings.securityEnabled?'block':'none';
+  document.getElementById('secMethod').value = DB.settings.method;
+  document.getElementById('fpEnabled').checked = DB.settings.fingerprint;
+  renderSecMethod();
+}
+function toggleSecurity(){
+  DB.settings.securityEnabled = document.getElementById('secEnabled').checked;
+  saveDB('settings');
+  document.getElementById('secDetails').style.display = DB.settings.securityEnabled?'block':'none';
+}
+function renderSecMethod(){
+  DB.settings.method = document.getElementById('secMethod').value;
+  saveDB('settings');
+  document.getElementById('secPassSetup').style.display = DB.settings.method==='pass'?'block':'none';
+  document.getElementById('secPatternSetup').style.display = DB.settings.method==='pattern'?'block':'none';
+  if(DB.settings.method==='pattern'){
+    buildPatternGrid('setPatternGrid', (patStr)=>{
+      DB.settings.patternHash=simpleHash(patStr); saveDB('settings');
+      document.getElementById('setPatternHint').textContent='الگو ذخیره شد ✔';
+    });
+  }
+}
+function setPassword(){
+  const v=document.getElementById('newPass').value;
+  if(!v){ toast('رمز عبور را وارد کنید'); return; }
+  DB.settings.passHash=simpleHash(v); saveDB('settings');
+  document.getElementById('newPass').value='';
+  toast('رمز عبور ذخیره شد');
+}
+async function toggleFingerprint(){
+  const on=document.getElementById('fpEnabled').checked;
+  if(on){
+    const ok = await registerFingerprint();
+    if(!ok){ document.getElementById('fpEnabled').checked=false; DB.settings.fingerprint=false; saveDB('settings'); }
+  } else {
+    DB.settings.fingerprint=false; DB.settings.fpCredId=''; saveDB('settings');
+  }
+}
+
+/* ============ MODAL HELPER ============ */
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function confirmExit(){ document.getElementById('exitModalBg').classList.add('show'); }
+function doExit(){
+  closeModal('exitModalBg');
+  try{ window.close(); }catch(e){}
+  try{ if(window.navigator && window.navigator.app && window.navigator.app.exitApp){ window.navigator.app.exitApp(); } }catch(e){}
+  setTimeout(()=>{ toast('برای خروج کامل، دکمه‌ی برگشت گوشی را بزنید'); }, 400);
+}
+
+/* ============ SERVICE WORKER (offline support) ============ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+</script>
+</body>
+</html>
