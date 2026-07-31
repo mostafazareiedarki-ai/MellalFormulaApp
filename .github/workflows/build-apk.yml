@@ -65,7 +65,7 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "KEYSTORE_BASE64 secret: FOUND"
+            echo "KEYSTORE_BASE64 secret: FOUND (length: ${#KEYSTORE_BASE64} characters — a real keystore is usually 3000+ characters here)"
             echo "has_secret=true" >> "$GITHUB_OUTPUT"
           else
             echo "KEYSTORE_BASE64 secret: NOT FOUND — signing step will be skipped. Add it in Settings > Secrets and variables > Actions."
