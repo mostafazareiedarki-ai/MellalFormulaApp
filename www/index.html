@@ -169,7 +169,8 @@ input,textarea{user-select:text;}
 .pattern-dot.active{background:var(--gold); border-color:var(--gold);}
 .lock-btn{background:var(--gold); color:var(--on-gold); border:none; padding:11px 26px; border-radius:12px; font-size:14px; font-weight:700;}
 .lock-err{color:var(--danger); font-size:12px; height:16px; margin-top:6px;}
-.lock-fp{margin-top:14px; font-size:12px; color:var(--text-dim); text-decoration:underline;}
+.lock-fp{margin-top:18px; display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--gold-2); cursor:pointer;}
+.lock-fp span{font-size:12px; color:var(--text-dim);}
 
 /* ---------- Top bar ---------- */
 .topbar{
@@ -204,17 +205,19 @@ input,textarea{user-select:text;}
   background:linear-gradient(160deg, var(--chip1), var(--chip2));
   box-shadow:0 3px 8px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
 }
-.tile .ic svg{width:38px; height:38px;}
+.tile .ic svg, .tile .ic img{width:42px; height:42px; object-fit:contain;}
 .tile span{font-size:13.5px; color:var(--text); font-weight:700;}
 
 /* Theme-driven icon variants: only one set is shown at a time */
 .ic-v{display:none;}
-.ic-v-default{display:block;}
-html[data-theme='sepahan'] .ic-v-default{display:none;}
+.ic-v-mavara{display:block;}
+html[data-theme='sepahan'] .ic-v-mavara{display:none;}
 html[data-theme='sepahan'] .ic-v-sepahan{display:block;}
-html[data-theme='perspolis'] .ic-v-default{display:none;}
+html[data-theme='perspolis'] .ic-v-mavara{display:none;}
 html[data-theme='perspolis'] .ic-v-perspolis{display:block;}
-html[data-theme='ruhparvar'] .ic-v-default{display:none;}
+html[data-theme='aghaghia'] .ic-v-mavara{display:none;}
+html[data-theme='aghaghia'] .ic-v-aghaghia{display:block;}
+html[data-theme='ruhparvar'] .ic-v-mavara{display:none;}
 html[data-theme='ruhparvar'] .ic-v-ruhparvar{display:block;}
 
 /* Sepahan: rectangular, single button per row */
@@ -383,7 +386,19 @@ input:checked + .slider:before{transform:translateX(-20px);}
       <div class="pattern-grid" id="lockPatternGrid"></div>
     </div>
     <div class="lock-err" id="lockErr"></div>
-    <div class="lock-fp" id="lockFpBtn" onclick="tryFingerprint()" style="display:none">ورود با اثر انگشت</div>
+    <div class="lock-fp" id="lockFpBtn" onclick="tryFingerprint()" style="display:none">
+      <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a7 7 0 0 0-7 7v2c0 1.5-.3 3-1 4"/>
+        <path d="M5 20c1.5-1 2.5-2.5 3-4"/>
+        <path d="M19 9v2c0 4-1.5 7-4 9"/>
+        <path d="M12 2a7 7 0 0 1 7 7v2"/>
+        <path d="M9 9v2c0 3.5-1 6-3 8"/>
+        <path d="M12 9v2c0 4-1 7-3 9"/>
+        <path d="M15 9v2c0 3-.5 5.5-2 7.5"/>
+        <path d="M9 5.5A7 7 0 0 1 19 11"/>
+      </svg>
+      <span>ورود با اثر انگشت</span>
+    </div>
   </div>
 
   <!-- TOPBAR -->
@@ -402,40 +417,46 @@ input:checked + .slider:before{transform:translateX(-20px);}
     </div>
     <div class="grid">
       <div class="tile" onclick="nav('materials')"><div class="ic">
-        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><path d="M19 6h10 M21 6v10l-9 20a3 3 0 0 0 3 4h18a3 3 0 0 0 3-4l-9-20V6" fill="none" stroke="url(#g1)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 30h16" stroke="url(#g1)" stroke-width="2.2" fill="none"/><circle cx="22" cy="35" r="1.6" fill="var(--gold-2)"/><circle cx="27" cy="33" r="1.2" fill="var(--gold-2)"/></svg>
-        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><path d="M19 6h10v6l9 20a3 3 0 0 1-3 4H13a3 3 0 0 1-3-4l9-20V6z" fill="url(#g1)" stroke="none"/><rect x="14" y="30" width="20" height="5" rx="1.5" fill="var(--bg)" opacity=".5"/></svg>
-        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="none" stroke="url(#g1)" stroke-width="2.2"><circle cx="24" cy="24" r="8"/><circle cx="24" cy="24" r="3" fill="url(#g1)" stroke="none"/><path d="M24 8v6 M24 34v6 M8 24h6 M34 24h6 M12.3 12.3l4.2 4.2 M31.5 31.5l4.2 4.2 M12.3 35.7l4.2-4.2 M31.5 16.5l4.2-4.2"/></g></svg>
-        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M20 6h8 M22 6v10l-8 18a2.4 2.4 0 0 0 2.2 3.4h15.6A2.4 2.4 0 0 0 34 34l-8-18V6" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><path d="M17.5 28c1.5 1.4 3 1.4 4.5 0s3-1.4 4.5 0 3 1.4 4.5 0l1 2.4c1 2.4-.6 5.6-3.6 5.6H20.1c-3 0-4.6-3.2-3.6-5.6z" fill="var(--icon-accent2)" stroke="none"/></svg>
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-materials.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-materials.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-materials.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-materials.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-materials.png">
       </div><span>مواد اولیه</span></div>
       <div class="tile" onclick="nav('formulas')"><div class="ic">
-        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="35" rx="4" fill="none" stroke="url(#g1)" stroke-width="2.4"/><rect x="17" y="4" width="14" height="7" rx="2" fill="none" stroke="url(#g1)" stroke-width="2.2"/><path d="M15 20l3 3 5-6 M15 30l3 3 5-6" stroke="var(--gold-2)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 20h6 M27 30h6" stroke="var(--gold-2)" stroke-width="2.2" stroke-linecap="round"/></svg>
-        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="35" rx="3" fill="url(#g1)"/><rect x="15" y="4" width="18" height="6" rx="1.5" fill="var(--chip1)"/><rect x="15" y="18" width="18" height="3.5" rx="1" fill="var(--bg)" opacity=".55"/><rect x="15" y="26" width="18" height="3.5" rx="1" fill="var(--bg)" opacity=".55"/><rect x="15" y="34" width="10" height="3.5" rx="1" fill="var(--bg)" opacity=".55"/></svg>
-        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="url(#g1)"><rect x="8" y="30" width="6" height="8"/><rect x="17" y="26" width="6" height="12"/><rect x="26" y="30" width="6" height="8"/><rect x="35" y="26" width="6" height="12"/></g><path d="M8 26h33" stroke="url(#g1)" stroke-width="2.2"/></svg>
-        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><g stroke="var(--gold)" stroke-width="2"><path d="M14 16l10 8 M24 24l10-9 M24 24v11"/></g><circle cx="14" cy="16" r="4.2" fill="var(--icon-accent2)"/><circle cx="34" cy="15" r="4.2" fill="var(--icon-accent2)"/><circle cx="24" cy="24" r="4.2" fill="var(--icon-accent2)"/><circle cx="18" cy="38" r="4.2" fill="var(--icon-accent2)"/><path d="M24 24l-6 14" stroke="var(--gold)" stroke-width="2"/></svg>
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-formulas.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-formulas.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-formulas.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-formulas.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-formulas.png">
       </div><span>فرمول‌ها</span></div>
       <div class="tile" onclick="nav('costs')"><div class="ic">
-        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><circle cx="16" cy="32" r="7" fill="none" stroke="url(#g1)" stroke-width="2.4"/><circle cx="27" cy="32" r="7" fill="none" stroke="url(#g1)" stroke-width="2.4"/><path d="M9 20L20 10l6 5 12-12" stroke="var(--gold-2)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 3h8v8" stroke="var(--gold-2)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><circle cx="17" cy="30" r="8" fill="url(#g1)"/><circle cx="29" cy="20" r="8" fill="var(--chip1)"/><circle cx="29" cy="20" r="8" fill="url(#g1)" opacity=".55"/></svg>
-        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="none" stroke="url(#g1)" stroke-width="2.2"><circle cx="24" cy="24" r="7"/></g><g stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"><path d="M24 8v6 M24 34v6 M8 24h6 M34 24h6 M13 13l4.2 4.2 M30.8 30.8l4.2 4.2 M13 35l4.2-4.2 M30.8 17.2l4.2-4.2"/></g></svg>
-        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M13 8h6 M14 8v7l-6 14a2 2 0 0 0 1.9 2.8h11.4A2 2 0 0 0 23 29l-6-14V8" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/><path d="M29 8h6 M30 8v7l-6 14a2 2 0 0 0 1.9 2.8h11.4A2 2 0 0 0 39 29l-6-14V8" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/><path d="M12 24h11" stroke="var(--gold)" stroke-width="1.8" stroke-dasharray="2 2"/><path d="M11 28a5 5 0 0 0 10 0z" fill="var(--icon-accent2)"/><path d="M27 28a5 5 0 0 0 10 0z" fill="var(--icon-accent2)"/></svg>
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-costs.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-costs.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-costs.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-costs.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-costs.png">
       </div><span>هزینه‌های تولید</span></div>
       <div class="tile" onclick="nav('produce')"><div class="ic">
-        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><path d="M18 6h7 M20 6v9l-7 15a2.6 2.6 0 0 0 2.4 3.7H29" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="28" y="20" width="14" height="18" rx="2.5" fill="none" stroke="url(#g1)" stroke-width="2.2"/><path d="M31 24h8 M31 29h2.2 M35.8 29h2.2 M31 33.5h2.2 M35.8 33.5h2.2" stroke="var(--gold-2)" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><path d="M18 6h7v6l8 17a2.6 2.6 0 0 1-2.4 3.7H12.4A2.6 2.6 0 0 1 10 28.7L18 12V6z" fill="url(#g1)"/><rect x="16" y="27" width="14" height="4" rx="1" fill="var(--bg)" opacity=".5"/></svg>
-        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><path d="M8 20c6-8 12-8 16 0" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linecap="round"/><path d="M40 20c-6-8-12-8-16 0" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="20" r="4" fill="url(#g1)"/><path d="M24 24v14" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/><path d="M17 38h14" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/></svg>
-        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><circle cx="18" cy="16" r="7" fill="none" stroke="var(--gold)" stroke-width="2"/><path d="M18 6v3 M18 23v3 M8 16h3 M25 16h3 M11.5 9.5l2 2 M22.5 22.5l2 2 M11.5 22.5l2-2 M22.5 9.5l2 2" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/><path d="M31 12h9v22a4.5 4.5 0 0 1-9 0z" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/><path d="M31 25h9v9a4.5 4.5 0 0 1-9 0z" fill="var(--icon-accent2)"/></svg>
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-produce.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-produce.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-produce.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-produce.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-produce.png">
       </div><span>ماشین حساب تولید</span></div>
       <div class="tile" onclick="nav('settings')"><div class="ic">
-        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><circle cx="20" cy="20" r="6.5" fill="none" stroke="url(#g1)" stroke-width="2.4"/><path d="M20 8v3 M20 29v3 M8 20h3 M29 20h3 M11.5 11.5l2 2 M26.5 26.5l2 2 M11.5 28.5l2-2 M26.5 13.5l2-2" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/><path d="M24 30l12 12 M40 30l-12 12" stroke="var(--gold-2)" stroke-width="2.6" stroke-linecap="round"/></svg>
-        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><circle cx="24" cy="24" r="10" fill="url(#g1)"/><path d="M24 6v6 M24 36v6 M6 24h6 M36 24h6 M11 11l4.2 4.2 M32.8 32.8l4.2 4.2 M11 37l4.2-4.2 M32.8 15.2l4.2-4.2" stroke="url(#g1)" stroke-width="3.4" stroke-linecap="round"/></svg>
-        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><g fill="none" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"><path d="M14 40V16c0-4 4-7 10-7s10 3 10 7v24"/><path d="M14 40h20 M10 12c2-3 6-3 8 0 M20 12c2-3 6-3 8 0 M28 12c2-3 6-3 8 0"/></g></svg>
-        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M24 8v4 M24 36v4 M8 24h4 M36 24h4 M13 13l2.8 2.8 M32.2 32.2l2.8 2.8 M13 35l2.8-2.8 M32.2 15.8l2.8-2.8" stroke="var(--gold)" stroke-width="2.6" stroke-linecap="round"/><circle cx="24" cy="24" r="9" fill="none" stroke="var(--gold)" stroke-width="2.2"/><circle cx="24" cy="24" r="3.6" fill="var(--icon-accent2)"/></svg>
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-settings.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-settings.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-settings.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-settings.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-settings.png">
       </div><span>تنظیمات</span></div>
       <div class="tile" onclick="nav('backup')"><div class="ic">
-        <svg class="ic-v ic-v-default" viewBox="0 0 48 48"><path d="M14 30a7 7 0 0 1 1-13.9 9.5 9.5 0 0 1 18.4-2A7.5 7.5 0 0 1 34 30H14z" fill="none" stroke="url(#g1)" stroke-width="2.4" stroke-linejoin="round"/><path d="M24 21v13 M19 27l5-5 5 5" stroke="var(--gold-2)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <svg class="ic-v ic-v-sepahan" viewBox="0 0 48 48"><path d="M14 30a7 7 0 0 1 1-13.9 9.5 9.5 0 0 1 18.4-2A7.5 7.5 0 0 1 34 30H14z" fill="url(#g1)"/><path d="M19 27l5-5 5 5" stroke="var(--bg)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>
-        <svg class="ic-v ic-v-perspolis" viewBox="0 0 48 48"><path d="M16 40h16l-8-14z" fill="none" stroke="url(#g1)" stroke-width="2.2" stroke-linejoin="round"/><path d="M24 26c-3-4-2-8 0-11 2 3 3 7 0 11z" fill="url(#g1)"/><path d="M10 40h28" stroke="url(#g1)" stroke-width="2.2" stroke-linecap="round"/></svg>
-        <svg class="ic-v ic-v-ruhparvar" viewBox="0 0 48 48"><path d="M20 22h8 M22 22v6l-7 10a2.2 2.2 0 0 0 2 3.2h14a2.2 2.2 0 0 0 2-3.2l-7-10v-6" fill="none" stroke="var(--gold)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/><path d="M24 6c-3 4-4 8 0 12 4-4 3-8 0-12z" fill="var(--icon-accent2)"/></svg>
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-backup.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-backup.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-backup.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-backup.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-backup.png">
       </div><span>پشتیبان‌گیری</span></div>
     </div>
     <div class="about-btn" onclick="nav('about')">درباره برنامه</div>
@@ -801,7 +822,11 @@ function showLock(){
     document.getElementById('lockPassMode').style.display='block';
     document.getElementById('lockPatternMode').style.display='none';
   }
-  document.getElementById('lockFpBtn').style.display = (DB.settings.fingerprint && DB.settings.fpCredId) ? 'block':'none';
+  const fpReady = DB.settings.fingerprint && DB.settings.fpCredId;
+  document.getElementById('lockFpBtn').style.display = fpReady ? 'flex':'none';
+  if(fpReady){
+    setTimeout(()=>{ tryFingerprint(); }, 350);
+  }
 }
 function tryPassUnlock(){
   const v=document.getElementById('lockPassInput').value;
