@@ -297,6 +297,17 @@ select{appearance:none;}
 .form-box{background:linear-gradient(160deg, var(--card-2), var(--card)); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:14px; margin-top:14px; box-shadow:var(--e1);}
 .row2{display:flex; gap:10px;}
 .row2 > div{flex:1;}
+.tree-select{display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:12px; border:1px solid #2a415f; background:var(--card-2); box-shadow:var(--e-press); cursor:pointer;}
+.tree-select-arrow{color:var(--gold-2); font-size:16px; transform:rotate(180deg);}
+.tree-group{margin-bottom:8px; border-radius:10px; overflow:hidden; background:var(--card-2);}
+.tree-group-header{display:flex; justify-content:space-between; align-items:center; padding:11px 12px; cursor:pointer; font-weight:700; font-size:13.5px;}
+.tree-caret{transition:transform .15s ease; color:var(--gold-2);}
+.tree-group-items{max-height:0; overflow:hidden; transition:max-height .2s ease;}
+.tree-group-items.open{max-height:1000px;}
+.tree-group.open .tree-caret{transform:rotate(180deg);}
+.tree-item{padding:11px 16px; font-size:13px; border-top:1px solid rgba(255,255,255,.06); cursor:pointer;}
+.tree-item:active{background:rgba(255,255,255,.05);}
+
 .matline{display:flex; gap:8px; align-items:center; background:var(--card-2); padding:8px 10px; border-radius:10px; margin-bottom:8px; box-shadow:var(--e-press);}
 .matline .mname{flex:1; font-size:13px;}
 .matline input{width:80px; padding:8px; font-size:13px;}
@@ -403,7 +414,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
 
   <!-- TOPBAR -->
   <div class="topbar" id="topbar" style="display:none">
-    <button class="backBtn" id="backBtn" onclick="goHome()" style="display:none">→</button>
+    <button class="backBtn" id="backBtn" onclick="goBack()" style="display:none">→</button>
     <h1 id="screenTitle">Mellal Chem</h1>
     <div style="width:36px"></div>
   </div>
@@ -413,7 +424,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
     <div class="home-hero">
       <img src="assets/icon.png">
       <h2>محاسبات تولید ملل</h2>
-      <span>Mellal Chem — نسخه 140505-1</span>
+      <span>Mellal Chem — نسخه 2-140505</span>
     </div>
     <div class="grid">
       <div class="tile" onclick="nav('materials')"><div class="ic">
@@ -458,6 +469,13 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-backup.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-backup.png">
       </div><span>پشتیبان‌گیری</span></div>
+      <div class="tile" onclick="nav('sales')"><div class="ic">
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-sales.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-sales.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-sales.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-sales.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-sales.png">
+      </div><span>مدیریت فروش</span></div>
     </div>
     <div class="about-btn" onclick="nav('about')">درباره برنامه</div>
     <div class="fab secondary" style="margin-top:10px; color:var(--danger); border-color:var(--danger);" onclick="confirmExit()">خروج از برنامه</div>
@@ -529,7 +547,10 @@ input:checked + .slider:before{transform:translateX(-20px);}
   <div class="screen" id="screen-produce">
     <div class="form-box">
       <label>انتخاب فرمول</label>
-      <select id="pFormula" onchange="renderProduceInfo()"></select>
+      <div class="tree-select" onclick="openFormulaTreePicker('produce')">
+        <span id="pFormulaDisplay">انتخاب کنید...</span><span class="tree-select-arrow">›</span>
+      </div>
+      <input type="hidden" id="pFormula">
       <label>میزان مورد نیاز (کیلوگرم)</label>
       <input type="number" id="pQty" step="0.01" oninput="calcProduce()">
       <div class="hint" id="pFormulaInfo"></div>
@@ -629,6 +650,99 @@ input:checked + .slider:before{transform:translateX(-20px);}
         </div>
       </div>
     </div>
+    <div class="form-box">
+      <div class="toggle-row">
+        <span>پشتیبان‌گیری خودکار دوره‌ای</span>
+        <label class="switch"><input type="checkbox" id="autoBackupEnabled" onchange="toggleAutoBackup()"><span class="slider"></span></label>
+      </div>
+      <div id="autoBackupDetails" style="display:none; margin-top:10px;">
+        <label>بازه‌ی زمانی (روز)</label>
+        <input type="number" id="autoBackupDays" step="1" min="1" onchange="setAutoBackupDays()">
+        <div class="hint" id="autoBackupLastInfo"></div>
+      </div>
+    </div>
+    <div class="form-box">
+      <button class="fab secondary" onclick="nav('history')">تاریخچه تولید</button>
+      <button class="fab secondary" onclick="nav('activitylog')">لاگ عملکرد</button>
+    </div>
+  </div>
+
+  <!-- PRODUCTION HISTORY -->
+  <div class="screen" id="screen-history">
+    <div id="historyList"></div>
+    <button class="fab secondary" onclick="clearHistory()">پاک کردن تاریخچه</button>
+  </div>
+
+  <!-- ACTIVITY LOG -->
+  <div class="screen" id="screen-activitylog">
+    <div class="hint" style="margin-bottom:10px;">ثبت خودکار اتفاقات مهم از لحظه‌ی ورود تا خروج از برنامه.</div>
+    <div id="activityLogList"></div>
+    <button class="fab secondary" onclick="clearActivityLog()">پاک کردن لاگ</button>
+  </div>
+
+  <!-- SALES HUB -->
+  <div class="screen" id="screen-sales">
+    <div class="grid">
+      <div class="tile" onclick="nav('contacts')"><div class="ic">
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-contacts.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-contacts.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-contacts.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-contacts.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-contacts.png">
+      </div><span>مخاطبین</span></div>
+      <div class="tile" onclick="nav('products')"><div class="ic">
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-products.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-products.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-products.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-products.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-products.png">
+      </div><span>محصولات</span></div>
+      <div class="tile" onclick="nav('pricing')"><div class="ic">
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-pricing.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-pricing.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-pricing.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-pricing.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-pricing.png">
+      </div><span>قیمت‌گذاری</span></div>
+      <div class="tile" onclick="nav('sendlist')"><div class="ic">
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-sendlist.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-sendlist.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-sendlist.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-sendlist.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-sendlist.png">
+      </div><span>ارسال لیست</span></div>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div class="screen" id="screen-contacts">
+    <button class="fab secondary" onclick="openSalesGroupModal()">مدیریت گروه‌ها</button>
+    <div id="contactsList" style="margin-top:10px;"></div>
+    <button class="fab" onclick="openContactModal()">+ مخاطب جدید</button>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="screen" id="screen-products">
+    <div id="productsList"></div>
+    <button class="fab" onclick="openProductModal()">+ محصول جدید</button>
+  </div>
+
+  <!-- PRICING -->
+  <div class="screen" id="screen-pricing">
+    <div id="pricingList"></div>
+    <button class="fab" onclick="openPricingModal()">+ قیمت‌گذاری جدید</button>
+  </div>
+
+  <!-- SEND LIST -->
+  <div class="screen" id="screen-sendlist">
+    <div class="form-box">
+      <label>انتخاب مخاطب</label>
+      <div class="tree-select" onclick="openContactTreePicker('sendlist')">
+        <span id="slContactDisplay">انتخاب کنید...</span><span class="tree-select-arrow">›</span>
+      </div>
+      <input type="hidden" id="slContact">
+    </div>
+    <div id="sendListPreviewBox" style="margin-top:14px;"></div>
   </div>
 
   <!-- ABOUT -->
@@ -637,7 +751,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
       <img src="assets/icon.png">
       <h2 style="margin:6px 0 2px;">Mellal Chem</h2>
       <div style="color:var(--text-dim); font-size:12px;">نرم‌افزار محاسبات تولید ملل</div>
-      <div class="pill" style="display:inline-block; margin-top:10px;">نسخه 140505-1</div>
+      <div class="pill" style="display:inline-block; margin-top:10px;">نسخه 2-140505</div>
     </div>
     <div class="card">
       <div class="card-title" style="margin-bottom:10px;">اطلاعات سازنده</div>
@@ -746,6 +860,86 @@ input:checked + .slider:before{transform:translateX(-20px);}
   <button class="fab secondary" onclick="closeModal('costPickerModalBg'); quickAddCost();">+ خدمت جدید بسازید</button>
 </div></div>
 
+<!-- CONTACT MODAL -->
+<div class="modal-bg" id="contactModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('contactModalBg')">×</button>
+  <h3 id="contactModalTitle">مخاطب جدید</h3>
+  <label>نام</label>
+  <input type="text" id="contactName" placeholder="مثلاً آقای خادم">
+  <label>شماره موبایل</label>
+  <input type="tel" id="contactMobile" placeholder="09xxxxxxxxx">
+  <label>گروه</label>
+  <select id="contactGroup"></select>
+  <button class="fab secondary" onclick="saveContact()">ذخیره</button>
+</div></div>
+
+<!-- CONTACT GROUP MODAL -->
+<div class="modal-bg" id="contactGroupModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('contactGroupModalBg')">×</button>
+  <h3>مدیریت گروه‌های مخاطبین</h3>
+  <div id="salesGroupList" style="margin-bottom:12px;"></div>
+  <label>نام گروه جدید</label>
+  <input type="text" id="newSalesGroupName" placeholder="مثلاً عمده‌فروش">
+  <button class="fab secondary" onclick="addSalesGroup()">افزودن گروه</button>
+</div></div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-bg" id="productModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('productModalBg')">×</button>
+  <h3 id="productModalTitle">محصول جدید</h3>
+  <label>نام محصول</label>
+  <input type="text" id="productName" placeholder="مثلاً ماستیک سوپر">
+  <label>فرمول تولید</label>
+  <div class="tree-select" onclick="openFormulaTreePicker('product')">
+    <span id="productFormulaDisplay">انتخاب کنید...</span><span class="tree-select-arrow">›</span>
+  </div>
+  <input type="hidden" id="productFormula">
+  <label>مدت فروش غیرنقدی (ماه)</label>
+  <input type="number" id="productMonths" step="1" value="1">
+  <label>کارمزد هر ماه (٪)</label>
+  <input type="number" id="productFee" step="0.1" value="0">
+  <button class="fab secondary" onclick="saveProduct()">ذخیره</button>
+</div></div>
+
+<!-- PRICING MODAL -->
+<div class="modal-bg" id="pricingModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('pricingModalBg')">×</button>
+  <h3 id="pricingModalTitle">قیمت‌گذاری جدید</h3>
+  <label>مخاطب</label>
+  <div class="tree-select" onclick="openContactTreePicker('pricing')">
+    <span id="pricingContactDisplay">انتخاب کنید...</span><span class="tree-select-arrow">›</span>
+  </div>
+  <input type="hidden" id="pricingContact">
+  <label>محصول</label>
+  <select id="pricingProduct"></select>
+  <label>حاشیه سود (تومان به ازای هر کیلوگرم)</label>
+  <input type="number" id="pricingMargin" step="1" value="0">
+  <button class="fab secondary" onclick="savePricing()">ذخیره</button>
+</div></div>
+
+<!-- SALES LIST PREVIEW MODAL -->
+<div class="modal-bg" id="salesListModalBg"><div class="modal">
+  <button class="close-x" onclick="closeModal('salesListModalBg')">×</button>
+  <h3>پیش‌نمایش پیام</h3>
+  <div class="hint">متن رو می‌تونید قبل از ارسال ویرایش کنید.</div>
+  <textarea id="salesListTextArea" rows="10" style="margin-top:10px;"></textarea>
+  <button class="fab secondary" onclick="shareSalesListNow()">ارسال / اشتراک‌گذاری</button>
+</div></div>
+
+<!-- FORMULA TREE PICKER MODAL -->
+<div class="modal-bg" id="formulaTreePickerModalBg" style="z-index:300;"><div class="modal">
+  <button class="close-x" onclick="closeModal('formulaTreePickerModalBg')">×</button>
+  <h3>انتخاب فرمول</h3>
+  <div id="formulaTreePickerList" style="margin-top:10px;"></div>
+</div></div>
+
+<!-- CONTACT TREE PICKER MODAL -->
+<div class="modal-bg" id="contactTreePickerModalBg" style="z-index:300;"><div class="modal">
+  <button class="close-x" onclick="closeModal('contactTreePickerModalBg')">×</button>
+  <h3>انتخاب مخاطب</h3>
+  <div id="contactTreePickerList" style="margin-top:10px;"></div>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -753,7 +947,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
    Note: this file is meant to be wrapped into a real Android app
    (see BUILD-APK-GUIDE.md). Inside such a WebView, localStorage
    persists normally between app launches. */
-const DB_KEYS = ['materials','costs','groups','formulas','history','settings'];
+const DB_KEYS = ['materials','costs','groups','formulas','history','settings','activityLog','salesGroups','contacts','products','pricing'];
 function dbGet(key, def){ try{ const v = localStorage.getItem('mc_'+key); return v?JSON.parse(v):def; }catch(e){ return def; } }
 function dbSet(key, val){ localStorage.setItem('mc_'+key, JSON.stringify(val)); }
 
@@ -763,11 +957,21 @@ let DB = {
   groups: dbGet('groups', ['عمومی']),
   formulas: dbGet('formulas', []),
   history: dbGet('history', []),
-  settings: dbGet('settings', {securityEnabled:false, method:'pass', passHash:'', patternHash:'', fingerprint:false, fpCredId:'', theme:'mavara'})
+  settings: dbGet('settings', {securityEnabled:false, method:'pass', passHash:'', patternHash:'', fingerprint:false, fpCredId:'', theme:'mavara', autoBackupEnabled:false, autoBackupDays:7, lastAutoBackup:''}),
+  activityLog: dbGet('activityLog', []),
+  salesGroups: dbGet('salesGroups', ['عمومی']),
+  contacts: dbGet('contacts', []),
+  products: dbGet('products', []),
+  pricing: dbGet('pricing', [])
 };
 function saveDB(part){ dbSet(part, DB[part]); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+function logActivity(event, detail){
+  DB.activityLog.unshift({ ts: new Date().toISOString(), event, detail: detail||'' });
+  DB.activityLog = DB.activityLog.slice(0, 500);
+  saveDB('activityLog');
+}
 function applyTheme(theme){
   const valid = ['mavara','sepahan','perspolis','aghaghia','ruhparvar'];
   if(!valid.includes(theme)) theme='mavara';
@@ -781,10 +985,15 @@ function applyTheme(theme){
 function selectTheme(theme){
   DB.settings.theme = theme; saveDB('settings');
   applyTheme(theme);
+  logActivity('تغییر تم', theme);
 }
 applyTheme(DB.settings.theme || 'mavara');
 function fmt(n){ return Math.round(Number(n||0)).toLocaleString('en-US'); }
 function fmtKg(n){ return Number(n||0).toLocaleString('en-US', {maximumFractionDigits:3}); }
+function jalaliDateEn(date){
+  try{ return new Intl.DateTimeFormat('fa-IR-u-nu-latn-ca-persian', {year:'numeric', month:'2-digit', day:'2-digit'}).format(date); }
+  catch(e){ return date.toLocaleDateString('en-US'); }
+}
 function simpleHash(str){ let h=0; for(let i=0;i<str.length;i++){h=(h*31+str.charCodeAt(i))>>>0;} return h.toString(36); }
 
 /* ============ SPLASH ============ */
@@ -805,8 +1014,14 @@ window.addEventListener('load', ()=>{
 function startApp(){
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').classList.add('show');
+  logActivity('ورود به برنامه');
+  checkAutoBackup();
   if(DB.settings.securityEnabled){ showLock(); } else { nav('home', true); }
 }
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='hidden'){ logActivity('خروج از برنامه (پس‌زمینه)'); }
+  else if(document.visibilityState==='visible' && DB.activityLog && DB.activityLog.length){ logActivity('بازگشت به برنامه'); }
+});
 
 /* ============ LOCK ============ */
 let pinBuffer='';
@@ -949,9 +1164,13 @@ async function tryFingerprint(){
 
 /* ============ NAV ============ */
 const TITLES = {home:'Mellal Chem', materials:'مواد اولیه', costs:'هزینه‌های تولید', formulas:'فرمول‌ها',
-  formulaEditor:'فرمول جدید', produce:'دریافت فرمول تولید', backup:'پشتیبان‌گیری و بازیابی', settings:'تنظیمات', about:'درباره برنامه'};
+  formulaEditor:'فرمول جدید', produce:'دریافت فرمول تولید', backup:'پشتیبان‌گیری و بازیابی', settings:'تنظیمات', about:'درباره برنامه',
+  history:'تاریخچه تولید', activitylog:'لاگ عملکرد',
+  sales:'مدیریت فروش', contacts:'مخاطبین', products:'محصولات', pricing:'قیمت‌گذاری', sendlist:'ارسال لیست'};
 let currentScreen='home';
-function nav(name, isHome){
+let navStack=[];
+function nav(name, fromBack){
+  if(!fromBack && currentScreen!==name){ navStack.push(currentScreen); }
   currentScreen=name;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
@@ -966,9 +1185,19 @@ function nav(name, isHome){
   if(name==='produce') renderProduceScreen();
   if(name==='settings') renderSettings();
   if(name==='backup') listBackupFiles();
+  if(name==='history') renderHistoryList();
+  if(name==='activitylog') renderActivityLogList();
+  if(name==='contacts') renderContacts();
+  if(name==='products') renderProducts();
+  if(name==='pricing') renderPricing();
+  if(name==='sendlist') renderSendListScreen();
   window.scrollTo(0,0);
 }
-function goHome(){ nav('home'); }
+function goBack(){
+  const prev = navStack.pop();
+  nav(prev || 'home', true);
+}
+function goHome(){ navStack=[]; nav('home', true); }
 
 /* ============ MATERIALS ============ */
 let editingMatId=null;
@@ -997,12 +1226,13 @@ function saveMaterial(){
   if(editingMatId){ const m=DB.materials.find(x=>x.id===editingMatId); m.name=name; m.short=short; m.price=price; }
   else{ newId=uid(); DB.materials.push({id:newId, name, short, price}); }
   saveDB('materials'); closeModal('materialModalBg'); renderMaterials(); toast('ذخیره شد');
+  logActivity('ماده اولیه ثبت شد', name);
   if(currentScreen==='formulaEditor'){
     if(!editingMatId && !(newId in currentFormulaMats)){ currentFormulaMats[newId]=''; }
     renderFormulaMaterialsBox(); updateFormulaSum();
   }
 }
-function delMaterial(id){ DB.materials=DB.materials.filter(x=>x.id!==id); saveDB('materials'); renderMaterials(); toast('حذف شد'); }
+function delMaterial(id){ const m=DB.materials.find(x=>x.id===id); DB.materials=DB.materials.filter(x=>x.id!==id); saveDB('materials'); renderMaterials(); toast('حذف شد'); logActivity('ماده اولیه حذف شد', m?m.name:''); }
 
 /* ============ COSTS ============ */
 let editingCostId=null;
@@ -1031,12 +1261,13 @@ function saveCost(){
   if(editingCostId){ const c=DB.costs.find(x=>x.id===editingCostId); c.name=name; c.type=type; c.amount=amount; }
   else{ newId=uid(); DB.costs.push({id:newId, name, type, amount}); }
   saveDB('costs'); closeModal('costModalBg'); renderCosts(); toast('ذخیره شد');
+  logActivity('هزینه تولید ثبت شد', name);
   if(currentScreen==='formulaEditor'){
     if(!editingCostId && !currentFormulaCosts.includes(newId)){ currentFormulaCosts.push(newId); }
     renderFormulaCostsBox();
   }
 }
-function delCost(id){ DB.costs=DB.costs.filter(x=>x.id!==id); saveDB('costs'); renderCosts(); toast('حذف شد'); }
+function delCost(id){ const c=DB.costs.find(x=>x.id===id); DB.costs=DB.costs.filter(x=>x.id!==id); saveDB('costs'); renderCosts(); toast('حذف شد'); logActivity('هزینه تولید حذف شد', c?c.name:''); }
 
 /* ============ GROUPS ============ */
 function renderGroupList(){
@@ -1064,7 +1295,7 @@ function renderFormulas(){
       <div><button class="icon-btn edit" onclick="openFormulaEditor('${f.id}')">✎</button><button class="icon-btn danger" onclick="delFormula('${f.id}')">🗑</button></div>
     </div></div>`).join('');
 }
-function delFormula(id){ DB.formulas=DB.formulas.filter(x=>x.id!==id); saveDB('formulas'); renderFormulas(); toast('حذف شد'); }
+function delFormula(id){ const f=DB.formulas.find(x=>x.id===id); DB.formulas=DB.formulas.filter(x=>x.id!==id); saveDB('formulas'); renderFormulas(); toast('حذف شد'); logActivity('فرمول حذف شد', f?f.name:''); }
 
 let editingFormulaId=null;
 let currentFormulaMats={};   // materialId -> kg (string)
@@ -1187,13 +1418,18 @@ function saveFormula(){
   } else {
     DB.formulas.push({id:uid(), name, group, batchKg, materials, costIds, defaultMargin, defaultMonths, defaultFee});
   }
-  saveDB('formulas'); toast('فرمول ذخیره شد'); nav('formulas');
+  saveDB('formulas'); toast('فرمول ذخیره شد'); logActivity('فرمول ذخیره شد', name); nav('formulas');
 }
 
 /* ============ PRODUCE / CALCULATE ============ */
 function renderProduceScreen(){
-  const sel=document.getElementById('pFormula');
-  sel.innerHTML = DB.formulas.map(f=>`<option value="${f.id}">${f.name} (${f.group})</option>`).join('');
+  const cur = document.getElementById('pFormula').value;
+  const stillExists = DB.formulas.find(f=>f.id===cur);
+  if(!stillExists){
+    const first = DB.formulas[0];
+    document.getElementById('pFormula').value = first ? first.id : '';
+    document.getElementById('pFormulaDisplay').textContent = first ? `${first.name} (${first.group})` : 'انتخاب کنید...';
+  }
   document.getElementById('pQty').value='';
   document.getElementById('produceTable1').innerHTML='';
   document.getElementById('produceTable2').innerHTML='';
@@ -1260,6 +1496,7 @@ function calcProduce(){
         <tr class="table-total-row"><td>قیمت تمام‌شده کل</td><td class="num">${fmt(total)}</td></tr>
         <tr class="table-total-row"><td>قیمت تمام‌شده هر کیلوگرم</td><td class="num">${fmt(total/qty)}</td></tr>
       </tbody></table>
+      <button class="fab secondary" onclick="exportProducePDF()">خروجی PDF</button>
     </div>`;
 
   profitBox.style.display='block';
@@ -1467,7 +1704,8 @@ function downloadImageNow(){
 
 /* ============ BACKUP / RESTORE ============ */
 function buildBackupData(){
-  return {materials:DB.materials, costs:DB.costs, groups:DB.groups, formulas:DB.formulas, history:DB.history, settings:{...DB.settings}};
+  return {materials:DB.materials, costs:DB.costs, groups:DB.groups, formulas:DB.formulas, history:DB.history, settings:{...DB.settings}, activityLog:DB.activityLog,
+    salesGroups:DB.salesGroups, contacts:DB.contacts, products:DB.products, pricing:DB.pricing};
 }
 function isCapacitorFS(){
   return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem);
@@ -1490,6 +1728,7 @@ async function buildBackupFileContent(){
 async function doBackup(){
   const fileContent = await buildBackupFileContent();
   const filename='mellal-chem-backup-'+new Date().toISOString().slice(0,10)+'.mcb';
+  logActivity('تهیه فایل پشتیبان', filename);
 
   if(isCapacitorFS()){
     await ensureFsPermission();
@@ -1582,7 +1821,7 @@ async function restoreFromRawFileText(rawText){
   }
 }
 
-const DEFAULT_SETTINGS = {securityEnabled:false, method:'pass', passHash:'', patternHash:'', fingerprint:false, fpCredId:'', theme:'mavara'};
+const DEFAULT_SETTINGS = {securityEnabled:false, method:'pass', passHash:'', patternHash:'', fingerprint:false, fpCredId:'', theme:'mavara', autoBackupEnabled:false, autoBackupDays:7, lastAutoBackup:''};
 
 // Fills in any fields missing from an older backup file with safe defaults,
 // so backups made by earlier versions of the app can still be restored fully.
@@ -1613,7 +1852,21 @@ function normalizeRestoredData(data){
     defaultFee: f.defaultFee || 0
   }));
   out.history = data.history || [];
+  out.activityLog = data.activityLog || [];
   out.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings||{});
+  out.salesGroups = (data.salesGroups && data.salesGroups.length) ? data.salesGroups : ['عمومی'];
+  out.contacts = (data.contacts||[]).map(c=>({
+    id: c.id || uid(), name: c.name || '', mobile: c.mobile || '', group: c.group || out.salesGroups[0]
+  }));
+  out.products = (data.products||[]).map(p=>({
+    id: p.id || uid(), name: p.name || '', formulaId: p.formulaId || '',
+    months: (typeof p.months==='number') ? p.months : (parseFloat(p.months)||0),
+    feePct: (typeof p.feePct==='number') ? p.feePct : (parseFloat(p.feePct)||0)
+  }));
+  out.pricing = (data.pricing||[]).map(pr=>({
+    id: pr.id || uid(), contactId: pr.contactId || '', productId: pr.productId || '',
+    marginPerKg: (typeof pr.marginPerKg==='number') ? pr.marginPerKg : (parseFloat(pr.marginPerKg)||0)
+  }));
   return out;
 }
 function applyRestoredData(data){
@@ -1622,6 +1875,7 @@ function applyRestoredData(data){
   const ta=document.getElementById('restoreText'); if(ta) ta.value='';
   const fi=document.getElementById('restoreFile'); if(fi) fi.value='';
   toast('بازیابی با موفقیت انجام شد (فیلدهای جدید با مقدار پیش‌فرض پر شدند)');
+  logActivity('بازیابی از پشتیبان انجام شد');
   nav('home');
 }
 function doRestore(){
@@ -1645,6 +1899,347 @@ function renderSettings(){
   document.getElementById('secMethod').value = DB.settings.method;
   document.getElementById('fpEnabled').checked = DB.settings.fingerprint;
   renderSecMethod();
+  document.getElementById('autoBackupEnabled').checked = DB.settings.autoBackupEnabled;
+  document.getElementById('autoBackupDetails').style.display = DB.settings.autoBackupEnabled?'block':'none';
+  document.getElementById('autoBackupDays').value = DB.settings.autoBackupDays || 7;
+  document.getElementById('autoBackupLastInfo').textContent = DB.settings.lastAutoBackup
+    ? 'آخرین پشتیبان خودکار: ' + new Date(DB.settings.lastAutoBackup).toLocaleDateString('en-US')
+    : 'هنوز پشتیبان خودکاری ثبت نشده.';
+}
+function toggleAutoBackup(){
+  DB.settings.autoBackupEnabled = document.getElementById('autoBackupEnabled').checked;
+  saveDB('settings');
+  document.getElementById('autoBackupDetails').style.display = DB.settings.autoBackupEnabled?'block':'none';
+  logActivity('تنظیمات', 'پشتیبان‌گیری خودکار ' + (DB.settings.autoBackupEnabled?'فعال':'غیرفعال') + ' شد');
+}
+function setAutoBackupDays(){
+  const v = parseInt(document.getElementById('autoBackupDays').value)||7;
+  DB.settings.autoBackupDays = v;
+  saveDB('settings');
+}
+async function checkAutoBackup(){
+  if(!DB.settings.autoBackupEnabled) return;
+  const days = DB.settings.autoBackupDays || 7;
+  const last = DB.settings.lastAutoBackup ? new Date(DB.settings.lastAutoBackup) : null;
+  const dueMs = days*24*60*60*1000;
+  if(last && (Date.now() - last.getTime()) < dueMs) return;
+  try{
+    const fileContent = await buildBackupFileContent();
+    const filename = 'mellal-chem-autobackup-'+new Date().toISOString().slice(0,10)+'.mcb';
+    if(isCapacitorFS()){
+      await ensureFsPermission();
+      const { Filesystem } = Capacitor.Plugins;
+      await Filesystem.writeFile({ path: filename, data: fileContent, directory: 'DOCUMENTS' });
+    }
+    DB.settings.lastAutoBackup = new Date().toISOString();
+    saveDB('settings');
+    logActivity('پشتیبان‌گیری خودکار', filename);
+  }catch(e){ /* silent — will retry next app open */ }
+}
+
+/* ============ PRODUCTION HISTORY ============ */
+function renderHistoryList(){
+  const box=document.getElementById('historyList');
+  if(!DB.history.length){ box.innerHTML='<div class="empty">هنوز تولیدی محاسبه نشده است.</div>'; return; }
+  box.innerHTML = DB.history.map(h=>`
+    <div class="card"><div class="card-row">
+      <div><div class="card-title">${h.formula}</div><div class="card-sub">${fmtKg(h.qty)} kg — ${fmt(h.total)} تومان</div></div>
+      <div class="card-sub">${new Date(h.date).toLocaleString('en-US')}</div>
+    </div></div>`).join('');
+}
+function clearHistory(){
+  DB.history=[]; saveDB('history'); renderHistoryList(); toast('تاریخچه پاک شد');
+}
+
+/* ============ ACTIVITY LOG ============ */
+function renderActivityLogList(){
+  const box=document.getElementById('activityLogList');
+  if(!DB.activityLog.length){ box.innerHTML='<div class="empty">هنوز رویدادی ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.activityLog.map(a=>`
+    <div class="card"><div class="card-row">
+      <div><div class="card-title">${a.event}</div>${a.detail?`<div class="card-sub">${a.detail}</div>`:''}</div>
+      <div class="card-sub">${new Date(a.ts).toLocaleString('en-US')}</div>
+    </div></div>`).join('');
+}
+function clearActivityLog(){
+  DB.activityLog=[]; saveDB('activityLog'); renderActivityLogList(); toast('لاگ پاک شد');
+}
+
+/* ============ SALES: CONTACT GROUPS ============ */
+function renderSalesGroupList(){
+  document.getElementById('salesGroupList').innerHTML = DB.salesGroups.map((g,i)=>`
+    <div class="matline"><div class="mname">${g}</div>
+      ${DB.salesGroups.length>1?`<button class="icon-btn danger" onclick="delSalesGroup(${i})">🗑</button>`:''}
+    </div>`).join('');
+}
+function openSalesGroupModal(){ renderSalesGroupList(); document.getElementById('contactGroupModalBg').classList.add('show'); }
+function addSalesGroup(){
+  const v=document.getElementById('newSalesGroupName').value.trim();
+  if(!v) return;
+  if(DB.salesGroups.includes(v)){ toast('این گروه از قبل وجود دارد'); return; }
+  DB.salesGroups.push(v); saveDB('salesGroups'); document.getElementById('newSalesGroupName').value=''; renderSalesGroupList();
+}
+function delSalesGroup(i){ DB.salesGroups.splice(i,1); saveDB('salesGroups'); renderSalesGroupList(); }
+
+/* ============ SALES: CONTACTS ============ */
+let editingContactId=null;
+function renderContacts(){
+  const box=document.getElementById('contactsList');
+  if(!DB.contacts.length){ box.innerHTML='<div class="empty">هنوز مخاطبی ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.contacts.map(c=>`
+    <div class="card"><div class="card-row">
+      <div><div class="card-title">${c.name} <span class="pill">${c.group}</span></div><div class="card-sub" style="direction:ltr; text-align:right;">${c.mobile}</div></div>
+      <div><button class="icon-btn edit" onclick="openContactModal('${c.id}')">✎</button><button class="icon-btn danger" onclick="delContact('${c.id}')">🗑</button></div>
+    </div></div>`).join('');
+}
+function openContactModal(id){
+  editingContactId=id||null;
+  const gSel=document.getElementById('contactGroup');
+  gSel.innerHTML = DB.salesGroups.map(g=>`<option value="${g}">${g}</option>`).join('');
+  document.getElementById('contactModalTitle').textContent = id?'ویرایش مخاطب':'مخاطب جدید';
+  if(id){
+    const c=DB.contacts.find(x=>x.id===id);
+    document.getElementById('contactName').value=c.name;
+    document.getElementById('contactMobile').value=c.mobile;
+    gSel.value=c.group;
+  } else {
+    document.getElementById('contactName').value='';
+    document.getElementById('contactMobile').value='';
+  }
+  document.getElementById('contactModalBg').classList.add('show');
+}
+function saveContact(){
+  const name=document.getElementById('contactName').value.trim();
+  const mobile=document.getElementById('contactMobile').value.trim();
+  const group=document.getElementById('contactGroup').value;
+  if(!name||!mobile){ toast('نام و شماره موبایل را وارد کنید'); return; }
+  if(editingContactId){ const c=DB.contacts.find(x=>x.id===editingContactId); Object.assign(c,{name,mobile,group}); }
+  else{ DB.contacts.push({id:uid(), name, mobile, group}); }
+  saveDB('contacts'); closeModal('contactModalBg'); renderContacts(); toast('ذخیره شد');
+  logActivity('مخاطب فروش ثبت شد', name);
+}
+function delContact(id){
+  const c=DB.contacts.find(x=>x.id===id);
+  DB.contacts=DB.contacts.filter(x=>x.id!==id);
+  DB.pricing=DB.pricing.filter(p=>p.contactId!==id); saveDB('pricing');
+  saveDB('contacts'); renderContacts(); toast('حذف شد');
+  logActivity('مخاطب فروش حذف شد', c?c.name:'');
+}
+
+/* ============ SALES: PRODUCTS ============ */
+let editingProductId=null;
+function renderProducts(){
+  const box=document.getElementById('productsList');
+  if(!DB.products.length){ box.innerHTML='<div class="empty">هنوز محصولی ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.products.map(p=>{
+    const f=DB.formulas.find(x=>x.id===p.formulaId);
+    return `<div class="card"><div class="card-row">
+      <div><div class="card-title">${p.name}</div><div class="card-sub">فرمول: ${f?f.name:'—'} — ${p.months} ماهه، ${p.feePct}٪ کارمزد</div></div>
+      <div><button class="icon-btn edit" onclick="openProductModal('${p.id}')">✎</button><button class="icon-btn danger" onclick="delProduct('${p.id}')">🗑</button></div>
+    </div></div>`;
+  }).join('');
+}
+function openProductModal(id){
+  editingProductId=id||null;
+  document.getElementById('productModalTitle').textContent = id?'ویرایش محصول':'محصول جدید';
+  if(id){
+    const p=DB.products.find(x=>x.id===id);
+    document.getElementById('productName').value=p.name;
+    document.getElementById('productFormula').value=p.formulaId;
+    const f=DB.formulas.find(x=>x.id===p.formulaId);
+    document.getElementById('productFormulaDisplay').textContent = f ? `${f.name} (${f.group})` : 'انتخاب کنید...';
+    document.getElementById('productMonths').value=p.months;
+    document.getElementById('productFee').value=p.feePct;
+  } else {
+    document.getElementById('productName').value='';
+    document.getElementById('productFormula').value='';
+    document.getElementById('productFormulaDisplay').textContent='انتخاب کنید...';
+    document.getElementById('productMonths').value=1;
+    document.getElementById('productFee').value=0;
+  }
+  document.getElementById('productModalBg').classList.add('show');
+}
+function saveProduct(){
+  const name=document.getElementById('productName').value.trim();
+  const formulaId=document.getElementById('productFormula').value;
+  const months=parseFloat(document.getElementById('productMonths').value)||0;
+  const feePct=parseFloat(document.getElementById('productFee').value)||0;
+  if(!name||!formulaId){ toast('نام محصول و فرمول را انتخاب کنید'); return; }
+  if(editingProductId){ const p=DB.products.find(x=>x.id===editingProductId); Object.assign(p,{name,formulaId,months,feePct}); }
+  else{ DB.products.push({id:uid(), name, formulaId, months, feePct}); }
+  saveDB('products'); closeModal('productModalBg'); renderProducts(); toast('ذخیره شد');
+  logActivity('محصول فروش ثبت شد', name);
+}
+function delProduct(id){
+  const p=DB.products.find(x=>x.id===id);
+  DB.products=DB.products.filter(x=>x.id!==id);
+  DB.pricing=DB.pricing.filter(pr=>pr.productId!==id); saveDB('pricing');
+  saveDB('products'); renderProducts(); toast('حذف شد');
+  logActivity('محصول فروش حذف شد', p?p.name:'');
+}
+
+/* ============ SALES: PRICING ============ */
+let editingPricingId=null;
+function renderPricing(){
+  const box=document.getElementById('pricingList');
+  if(!DB.pricing.length){ box.innerHTML='<div class="empty">هنوز قیمت‌گذاری ثبت نشده است.</div>'; return; }
+  box.innerHTML = DB.pricing.map(pr=>{
+    const c=DB.contacts.find(x=>x.id===pr.contactId);
+    const p=DB.products.find(x=>x.id===pr.productId);
+    return `<div class="card"><div class="card-row">
+      <div><div class="card-title">${c?c.name:'—'} ← ${p?p.name:'—'}</div><div class="card-sub">حاشیه سود: ${fmt(pr.marginPerKg)} تومان/کیلوگرم</div></div>
+      <div><button class="icon-btn edit" onclick="openPricingModal('${pr.id}')">✎</button><button class="icon-btn danger" onclick="delPricing('${pr.id}')">🗑</button></div>
+    </div></div>`;
+  }).join('');
+}
+function openPricingModal(id){
+  editingPricingId=id||null;
+  const pSel=document.getElementById('pricingProduct');
+  pSel.innerHTML = DB.products.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('pricingModalTitle').textContent = id?'ویرایش قیمت‌گذاری':'قیمت‌گذاری جدید';
+  if(DB.contacts.length===0 || DB.products.length===0){
+    toast('ابتدا حداقل یک مخاطب و یک محصول ثبت کنید');
+  }
+  if(id){
+    const pr=DB.pricing.find(x=>x.id===id);
+    document.getElementById('pricingContact').value=pr.contactId;
+    const c=DB.contacts.find(x=>x.id===pr.contactId);
+    document.getElementById('pricingContactDisplay').textContent = c ? `${c.name} (${c.group})` : 'انتخاب کنید...';
+    pSel.value=pr.productId;
+    document.getElementById('pricingMargin').value=pr.marginPerKg;
+  } else {
+    document.getElementById('pricingContact').value='';
+    document.getElementById('pricingContactDisplay').textContent='انتخاب کنید...';
+    document.getElementById('pricingMargin').value=0;
+  }
+  document.getElementById('pricingModalBg').classList.add('show');
+}
+function savePricing(){
+  const contactId=document.getElementById('pricingContact').value;
+  const productId=document.getElementById('pricingProduct').value;
+  const marginPerKg=parseFloat(document.getElementById('pricingMargin').value)||0;
+  if(!contactId||!productId){ toast('مخاطب و محصول را انتخاب کنید'); return; }
+  if(editingPricingId){ const pr=DB.pricing.find(x=>x.id===editingPricingId); Object.assign(pr,{contactId,productId,marginPerKg}); }
+  else{
+    const existing = DB.pricing.find(x=>x.contactId===contactId && x.productId===productId);
+    if(existing){ existing.marginPerKg=marginPerKg; }
+    else{ DB.pricing.push({id:uid(), contactId, productId, marginPerKg}); }
+  }
+  saveDB('pricing'); closeModal('pricingModalBg'); renderPricing(); toast('ذخیره شد');
+}
+function delPricing(id){ DB.pricing=DB.pricing.filter(x=>x.id!==id); saveDB('pricing'); renderPricing(); toast('حذف شد'); }
+
+/* ============ SALES: SEND LIST ============ */
+function formulaCostPerKg(f){
+  const factor = 1/f.batchKg;
+  let total = 0;
+  f.materials.forEach(fm=>{
+    const m=DB.materials.find(x=>x.id===fm.materialId);
+    if(m) total += fm.kg*factor*m.price;
+  });
+  (f.costIds||[]).forEach(cid=>{
+    const c=DB.costs.find(x=>x.id===cid);
+    if(!c) return;
+    total += c.type==='perkg' ? c.amount : c.amount*factor;
+  });
+  return total;
+}
+function renderSendListScreen(){
+  const cur = document.getElementById('slContact').value;
+  const stillExists = DB.contacts.find(c=>c.id===cur);
+  if(!stillExists){
+    const first = DB.contacts[0];
+    document.getElementById('slContact').value = first ? first.id : '';
+    document.getElementById('slContactDisplay').textContent = first ? `${first.name} (${first.group})` : 'انتخاب کنید...';
+  }
+  renderSendListPreview();
+}
+let _lastSendListData=null;
+function renderSendListPreview(){
+  const box=document.getElementById('sendListPreviewBox');
+  const contactId=document.getElementById('slContact').value;
+  const contact=DB.contacts.find(x=>x.id===contactId);
+  if(!contact){ box.innerHTML='<div class="empty">ابتدا یک مخاطب در بخش «مخاطبین» ثبت کنید.</div>'; return; }
+  const entries = DB.pricing.filter(pr=>pr.contactId===contactId);
+  if(!entries.length){ box.innerHTML='<div class="empty">هنوز محصولی برای این مخاطب قیمت‌گذاری نشده است.</div>'; return; }
+  let rows='';
+  const lines=[];
+  entries.forEach(pr=>{
+    const p=DB.products.find(x=>x.id===pr.productId);
+    if(!p) return;
+    const f=DB.formulas.find(x=>x.id===p.formulaId);
+    if(!f) return;
+    const costPerKg=formulaCostPerKg(f);
+    const cashPrice=costPerKg+pr.marginPerKg;
+    let nonCash=cashPrice;
+    for(let i=0;i<p.months;i++){ nonCash*= (1+p.feePct/100); }
+    rows += `<tr><td>${p.name}</td><td class="num">${fmt(cashPrice)}</td><td class="num">${fmt(nonCash)}</td></tr>`;
+    lines.push({name:p.name, cashPrice, nonCash, months:p.months});
+  });
+  box.innerHTML = `
+    <div class="card">
+      <div class="card-title" style="margin-bottom:8px;">پیش‌نمایش قیمت — ${contact.name}</div>
+      <table class="data-table"><thead><tr><th>محصول</th><th class="num">نقدی (هر kg)</th><th class="num">غیرنقدی</th></tr></thead><tbody>${rows}</tbody></table>
+      <button class="fab secondary" onclick="openSalesListPreview()">ساخت متن پیام</button>
+    </div>`;
+  _lastSendListData = {contact, lines};
+}
+function openSalesListPreview(){
+  if(!_lastSendListData){ toast('ابتدا یک مخاطب انتخاب کنید'); return; }
+  const dateStr = jalaliDateEn(new Date());
+  let msg = `جناب آقای ${_lastSendListData.contact.name}\nلیست قیمت محصولات خدمت شما ارسال می‌گردد.\nتاریخ: ${dateStr}\n`;
+  _lastSendListData.lines.forEach(l=>{
+    msg += `${l.name}، هر کیلو نقدی ${fmt(l.cashPrice)} تومان و چک ${l.months} ماهه ${fmt(l.nonCash)} تومان\n`;
+  });
+  document.getElementById('salesListTextArea').value = msg;
+  document.getElementById('salesListModalBg').classList.add('show');
+}
+async function shareSalesListNow(){
+  const msg = document.getElementById('salesListTextArea').value;
+  if(!msg.trim()){ toast('متن پیام خالی است'); return; }
+  const contactName = _lastSendListData ? _lastSendListData.contact.name : '';
+  if(isCapacitorShare()){
+    try{
+      const { Share } = Capacitor.Plugins;
+      await Share.share({ title:'لیست قیمت', text:msg, dialogTitle:'ارسال لیست قیمت' });
+      logActivity('ارسال لیست قیمت', contactName);
+      return;
+    }catch(e){ if(e && (''+e.message).toLowerCase().includes('cancel')) return; }
+  }
+  if(navigator.share){
+    try{ await navigator.share({title:'لیست قیمت', text:msg}); logActivity('ارسال لیست قیمت', contactName); return; }
+    catch(e){ if(e.name==='AbortError') return; }
+  }
+  if(navigator.clipboard){ navigator.clipboard.writeText(msg); toast('پنجره اشتراک‌گذاری در دسترس نیست؛ متن کپی شد'); }
+  else{ toast('اشتراک‌گذاری در این نسخه از برنامه پشتیبانی نمی‌شود'); }
+}
+
+/* ============ PDF EXPORT (via system print dialog) ============ */
+function exportProducePDF(){
+  if(!lastProduceResult){ toast('ابتدا میزان تولید را وارد کنید'); return; }
+  const r=lastProduceResult;
+  let rows = r.matLines.map(l=>`<tr><td>${l.name}</td><td style="direction:ltr; text-align:left;">${fmtKg(l.kg)} kg</td><td style="direction:ltr; text-align:left;">${fmt(l.cost)} تومان</td></tr>`).join('');
+  const html = `
+    <html dir="rtl"><head><meta charset="utf-8"><title>${r.formula.name}</title>
+    <style>
+      body{font-family:sans-serif; padding:24px; color:#111;}
+      h1{font-size:20px;} h2{font-size:14px; color:#555; font-weight:normal;}
+      table{width:100%; border-collapse:collapse; margin-top:16px;}
+      th,td{border:1px solid #ccc; padding:8px; text-align:right; font-size:13px;}
+      .total{font-weight:bold; font-size:15px; margin-top:14px;}
+    </style></head>
+    <body>
+      <h1>Mellal Chem — ${r.formula.name}</h1>
+      <h2>میزان تولید: ${fmtKg(r.qty)} کیلوگرم — تاریخ: ${new Date().toLocaleDateString('en-US')}</h2>
+      <table><thead><tr><th>ماده / هزینه</th><th>میزان</th><th>قیمت</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="total">قیمت تمام‌شده کل: ${fmt(r.total)} تومان — هر کیلوگرم: ${fmt(r.perKg)} تومان</div>
+    </body></html>`;
+  const w = window.open('', '_blank');
+  if(!w){ toast('اجازه‌ی باز کردن پنجره داده نشد'); return; }
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>{ w.print(); }, 300);
+  logActivity('خروجی PDF', r.formula.name);
 }
 function toggleSecurity(){
   DB.settings.securityEnabled = document.getElementById('secEnabled').checked;
@@ -1682,6 +2277,68 @@ async function toggleFingerprint(){
 
 /* ============ MODAL HELPER ============ */
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+/* ============ GENERIC TREE PICKER (group -> items) ============ */
+function buildTreePickerHTML(items, groupField, labelFn, onSelectFnName){
+  if(!items.length) return '<div class="empty">موردی برای انتخاب وجود ندارد.</div>';
+  const groups={};
+  items.forEach(it=>{ const g=it[groupField]||'سایر'; (groups[g]=groups[g]||[]).push(it); });
+  return Object.keys(groups).map(g=>{
+    const gid='tg_'+g.replace(/[^a-zA-Z0-9آ-ی]/g,'')+'_'+Math.random().toString(36).slice(2,7);
+    return `<div class="tree-group" id="wrap_${gid}">
+      <div class="tree-group-header" onclick="toggleTreeGroup('${gid}')"><span>${g}</span><span class="tree-caret">▾</span></div>
+      <div class="tree-group-items" id="${gid}">
+        ${groups[g].map(it=>`<div class="tree-item" onclick="${onSelectFnName}('${it.id}')">${labelFn(it)}</div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleTreeGroup(gid){
+  document.getElementById(gid).classList.toggle('open');
+  document.getElementById('wrap_'+gid).classList.toggle('open');
+}
+
+/* ---- Formula tree picker (used by: produce screen, product modal) ---- */
+let _formulaPickerTarget=null;
+function openFormulaTreePicker(target){
+  _formulaPickerTarget=target;
+  document.getElementById('formulaTreePickerList').innerHTML = buildTreePickerHTML(DB.formulas, 'group', f=>f.name, 'pickFormulaFromTree');
+  document.getElementById('formulaTreePickerModalBg').classList.add('show');
+}
+function pickFormulaFromTree(id){
+  const f=DB.formulas.find(x=>x.id===id);
+  if(!f) return;
+  closeModal('formulaTreePickerModalBg');
+  if(_formulaPickerTarget==='produce'){
+    document.getElementById('pFormula').value=id;
+    document.getElementById('pFormulaDisplay').textContent=`${f.name} (${f.group})`;
+    renderProduceInfo();
+  } else if(_formulaPickerTarget==='product'){
+    document.getElementById('productFormula').value=id;
+    document.getElementById('productFormulaDisplay').textContent=`${f.name} (${f.group})`;
+  }
+}
+
+/* ---- Contact tree picker (used by: send-list screen, pricing modal) ---- */
+let _contactPickerTarget=null;
+function openContactTreePicker(target){
+  _contactPickerTarget=target;
+  document.getElementById('contactTreePickerList').innerHTML = buildTreePickerHTML(DB.contacts, 'group', c=>`${c.name} — ${c.mobile}`, 'pickContactFromTree');
+  document.getElementById('contactTreePickerModalBg').classList.add('show');
+}
+function pickContactFromTree(id){
+  const c=DB.contacts.find(x=>x.id===id);
+  if(!c) return;
+  closeModal('contactTreePickerModalBg');
+  if(_contactPickerTarget==='sendlist'){
+    document.getElementById('slContact').value=id;
+    document.getElementById('slContactDisplay').textContent=`${c.name} (${c.group})`;
+    renderSendListPreview();
+  } else if(_contactPickerTarget==='pricing'){
+    document.getElementById('pricingContact').value=id;
+    document.getElementById('pricingContactDisplay').textContent=`${c.name} (${c.group})`;
+  }
+}
 function confirmExit(){ document.getElementById('exitModalBg').classList.add('show'); }
 function doExit(){
   closeModal('exitModalBg');
