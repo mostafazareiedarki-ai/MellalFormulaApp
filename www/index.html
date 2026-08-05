@@ -110,6 +110,56 @@ html[data-theme='ruhparvar']{
   --gold-rgb:46,204,143;
   --icon-accent2:#ec4899;
 }
+html[data-theme='windowsphone']{
+  --bg:#000000;
+  --bg-2:#0a0a0a;
+  --card:#171717;
+  --card-2:#1f1f1f;
+  --gold:#1BA1E2;
+  --gold-2:#4fc3f7;
+  --text:#ffffff;
+  --text-dim:#9d9d9d;
+  --danger:#E51400;
+  --good:#339933;
+  --on-gold:#ffffff;
+  --chip1:#1f1f1f;
+  --chip2:#000000;
+  --bg-glow:#000000;
+  --gold-rgb:27,161,226;
+  --icon-accent2:#F0A30A;
+}
+/* Windows Phone / Metro: flat, sharp corners, no shadows, per-tile solid colors */
+html[data-theme='windowsphone'] .tile,
+html[data-theme='windowsphone'] .card,
+html[data-theme='windowsphone'] .form-box,
+html[data-theme='windowsphone'] .fab,
+html[data-theme='windowsphone'] .about-btn,
+html[data-theme='windowsphone'] .modal,
+html[data-theme='windowsphone'] .pill,
+html[data-theme='windowsphone'] .theme-opt,
+html[data-theme='windowsphone'] input,
+html[data-theme='windowsphone'] select,
+html[data-theme='windowsphone'] textarea,
+html[data-theme='windowsphone'] .result-card,
+html[data-theme='windowsphone'] .tree-select,
+html[data-theme='windowsphone'] .tree-group,
+html[data-theme='windowsphone'] .matline{
+  border-radius:0 !important; box-shadow:none !important; background-image:none !important;
+}
+html[data-theme='windowsphone'] .tile .ic{background:transparent; box-shadow:none; border-radius:0;}
+html[data-theme='windowsphone'] .tile{border:none;}
+html[data-theme='windowsphone'] .tile span{color:#fff; font-weight:700;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(1){background:#0050EF;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(2){background:#FA6800;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(3){background:#339933;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(4){background:#00ABA9;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(5){background:#F0A30A;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(6){background:#D80073;}
+html[data-theme='windowsphone'] #screen-home .grid .tile:nth-child(7){background:#6A00FF;}
+html[data-theme='windowsphone'] #screen-sales .grid .tile:nth-child(1){background:#0050EF;}
+html[data-theme='windowsphone'] #screen-sales .grid .tile:nth-child(2){background:#00ABA9;}
+html[data-theme='windowsphone'] #screen-sales .grid .tile:nth-child(3){background:#FA6800;}
+html[data-theme='windowsphone'] #screen-sales .grid .tile:nth-child(4){background:#A20025;}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%; min-height:100vh; min-height:100dvh;}
 body{
@@ -219,6 +269,8 @@ html[data-theme='aghaghia'] .ic-v-mavara{display:none;}
 html[data-theme='aghaghia'] .ic-v-aghaghia{display:block;}
 html[data-theme='ruhparvar'] .ic-v-mavara{display:none;}
 html[data-theme='ruhparvar'] .ic-v-ruhparvar{display:block;}
+html[data-theme='windowsphone'] .ic-v-mavara{display:none;}
+html[data-theme='windowsphone'] .ic-v-windowsphone{display:block;}
 
 /* Sepahan: rectangular, single button per row */
 html[data-theme='sepahan'] .grid{grid-template-columns:1fr; gap:10px;}
@@ -433,6 +485,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-materials.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-materials.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-materials.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-materials.png">
       </div><span>مواد اولیه</span></div>
       <div class="tile" onclick="nav('formulas')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-formulas.png">
@@ -440,6 +493,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-formulas.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-formulas.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-formulas.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-formulas.png">
       </div><span>فرمول‌ها</span></div>
       <div class="tile" onclick="nav('costs')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-costs.png">
@@ -447,6 +501,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-costs.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-costs.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-costs.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-costs.png">
       </div><span>هزینه‌های تولید</span></div>
       <div class="tile" onclick="nav('produce')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-produce.png">
@@ -454,6 +509,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-produce.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-produce.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-produce.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-produce.png">
       </div><span>ماشین حساب تولید</span></div>
       <div class="tile" onclick="nav('settings')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-settings.png">
@@ -461,6 +517,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-settings.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-settings.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-settings.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-settings.png">
       </div><span>تنظیمات</span></div>
       <div class="tile" onclick="nav('backup')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-backup.png">
@@ -468,6 +525,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-backup.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-backup.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-backup.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-backup.png">
       </div><span>پشتیبان‌گیری</span></div>
       <div class="tile" onclick="nav('sales')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-sales.png">
@@ -475,6 +533,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-sales.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-sales.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-sales.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-sales.png">
       </div><span>مدیریت فروش</span></div>
     </div>
     <div class="about-btn" onclick="nav('about')">درباره برنامه</div>
@@ -623,6 +682,10 @@ input:checked + .slider:before{transform:translateX(-20px);}
           <div class="swatch" style="background:linear-gradient(135deg,#0e2d29 50%,#2ecc8f 50%);"></div>
           <span>تم روح‌پرور</span>
         </button>
+        <button type="button" class="theme-opt" id="themeOptWindowsphone" onclick="selectTheme('windowsphone')">
+          <div class="swatch" style="background:conic-gradient(#0050EF 0 25%, #FA6800 0 50%, #339933 0 75%, #D80073 0 100%);"></div>
+          <span>تم ویندوزفون</span>
+        </button>
       </div>
     </div>
     <div class="form-box">
@@ -689,6 +752,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-contacts.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-contacts.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-contacts.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-contacts.png">
       </div><span>مخاطبین</span></div>
       <div class="tile" onclick="nav('products')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-products.png">
@@ -696,6 +760,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-products.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-products.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-products.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-products.png">
       </div><span>محصولات</span></div>
       <div class="tile" onclick="nav('pricing')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-pricing.png">
@@ -703,6 +768,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-pricing.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-pricing.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-pricing.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-pricing.png">
       </div><span>قیمت‌گذاری</span></div>
       <div class="tile" onclick="nav('sendlist')"><div class="ic">
         <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-sendlist.png">
@@ -710,6 +776,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-sendlist.png">
         <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-sendlist.png">
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-sendlist.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-sendlist.png">
       </div><span>ارسال لیست</span></div>
     </div>
   </div>
@@ -911,9 +978,10 @@ input:checked + .slider:before{transform:translateX(-20px);}
   </div>
   <input type="hidden" id="pricingContact">
   <label>محصول</label>
-  <select id="pricingProduct"></select>
+  <select id="pricingProduct" onchange="updatePricingPreview()"></select>
   <label>حاشیه سود (تومان به ازای هر کیلوگرم)</label>
-  <input type="number" id="pricingMargin" step="1" value="0">
+  <input type="number" id="pricingMargin" step="1" value="0" oninput="updatePricingPreview()">
+  <div id="pricingPreviewBox" class="hint" style="margin-top:10px;"></div>
   <button class="fab secondary" onclick="savePricing()">ذخیره</button>
 </div></div>
 
@@ -973,7 +1041,7 @@ function logActivity(event, detail){
   saveDB('activityLog');
 }
 function applyTheme(theme){
-  const valid = ['mavara','sepahan','perspolis','aghaghia','ruhparvar'];
+  const valid = ['mavara','sepahan','perspolis','aghaghia','ruhparvar','windowsphone'];
   if(!valid.includes(theme)) theme='mavara';
   document.documentElement.setAttribute('data-theme', theme);
   document.getElementById('themeOptMavara')?.classList.toggle('active', theme==='mavara');
@@ -981,6 +1049,7 @@ function applyTheme(theme){
   document.getElementById('themeOptPerspolis')?.classList.toggle('active', theme==='perspolis');
   document.getElementById('themeOptAghaghia')?.classList.toggle('active', theme==='aghaghia');
   document.getElementById('themeOptRuhparvar')?.classList.toggle('active', theme==='ruhparvar');
+  document.getElementById('themeOptWindowsphone')?.classList.toggle('active', theme==='windowsphone');
 }
 function selectTheme(theme){
   DB.settings.theme = theme; saveDB('settings');
@@ -2113,6 +2182,23 @@ function openPricingModal(id){
     document.getElementById('pricingMargin').value=0;
   }
   document.getElementById('pricingModalBg').classList.add('show');
+  updatePricingPreview();
+}
+function updatePricingPreview(){
+  const box=document.getElementById('pricingPreviewBox');
+  const productId=document.getElementById('pricingProduct').value;
+  const margin=parseFloat(document.getElementById('pricingMargin').value)||0;
+  const p=DB.products.find(x=>x.id===productId);
+  if(!p){ box.innerHTML='ابتدا یک محصول انتخاب کنید.'; return; }
+  const f=DB.formulas.find(x=>x.id===p.formulaId);
+  if(!f){ box.innerHTML='فرمول این محصول یافت نشد.'; return; }
+  const costPerKg=formulaCostPerKg(f);
+  const cashPrice=roundPrice(costPerKg+margin);
+  const nonCash=roundPrice(cashPrice * (1 + (p.feePct/100)*p.months));
+  box.innerHTML = `
+    قیمت تمام‌شده (هر کیلو): <b>${fmt(costPerKg)}</b> تومان<br>
+    قیمت فروش نقدی (با حاشیه سود): <b>${fmt(cashPrice)}</b> تومان<br>
+    قیمت فروش غیرنقدی (${p.months} ماهه، ${p.feePct}٪ کارمزد): <b>${fmt(nonCash)}</b> تومان`;
 }
 function savePricing(){
   const contactId=document.getElementById('pricingContact').value;
@@ -2155,6 +2241,7 @@ function renderSendListScreen(){
   renderSendListPreview();
 }
 let _lastSendListData=null;
+function roundPrice(v){ return Math.round(v/1000)*1000; }
 function renderSendListPreview(){
   const box=document.getElementById('sendListPreviewBox');
   const contactId=document.getElementById('slContact').value;
@@ -2170,9 +2257,8 @@ function renderSendListPreview(){
     const f=DB.formulas.find(x=>x.id===p.formulaId);
     if(!f) return;
     const costPerKg=formulaCostPerKg(f);
-    const cashPrice=costPerKg+pr.marginPerKg;
-    let nonCash=cashPrice;
-    for(let i=0;i<p.months;i++){ nonCash*= (1+p.feePct/100); }
+    const cashPrice=roundPrice(costPerKg+pr.marginPerKg);
+    const nonCash=roundPrice(cashPrice * (1 + (p.feePct/100)*p.months));
     rows += `<tr><td>${p.name}</td><td class="num">${fmt(cashPrice)}</td><td class="num">${fmt(nonCash)}</td></tr>`;
     lines.push({name:p.name, cashPrice, nonCash, months:p.months});
   });
