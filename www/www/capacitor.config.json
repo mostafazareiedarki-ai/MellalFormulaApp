@@ -1,9 +1,0 @@
-{
-  "appId": "com.mellalchem.app",
-  "appName": "مدیریت فرمول ملل",
-  "webDir": "www",
-  "bundledWebRuntime": false,
-  "android": {
-    "allowMixedContent": false
-  }
-}

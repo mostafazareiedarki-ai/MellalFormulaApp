@@ -2197,13 +2197,22 @@ let editingPricingId=null;
 function renderPricing(){
   const box=document.getElementById('pricingList');
   if(!DB.pricing.length){ box.innerHTML='<div class="empty">هنوز قیمت‌گذاری ثبت نشده است.</div>'; return; }
-  box.innerHTML = DB.pricing.map(pr=>{
-    const c=DB.contacts.find(x=>x.id===pr.contactId);
-    const p=DB.products.find(x=>x.id===pr.productId);
-    return `<div class="card"><div class="card-row">
-      <div><div class="card-title">${c?c.name:'—'} ← ${p?p.name:'—'}</div><div class="card-sub">حاشیه سود: ${fmt(pr.marginPerKg)} تومان/کیلوگرم</div></div>
-      <div><button class="icon-btn edit" onclick="openPricingModal('${pr.id}')">✎</button><button class="icon-btn danger" onclick="delPricing('${pr.id}')">🗑</button></div>
-    </div></div>`;
+  const byContact={};
+  DB.pricing.forEach(pr=>{ (byContact[pr.contactId]=byContact[pr.contactId]||[]).push(pr); });
+  box.innerHTML = Object.keys(byContact).map(contactId=>{
+    const c=DB.contacts.find(x=>x.id===contactId);
+    const gid='pg_'+contactId;
+    const items = byContact[contactId].map(pr=>{
+      const p=DB.products.find(x=>x.id===pr.productId);
+      return `<div class="card" style="margin:6px 10px;"><div class="card-row">
+        <div><div class="card-title">${p?p.name:'—'}</div><div class="card-sub">حاشیه سود: ${fmt(pr.marginPerKg)} تومان/کیلوگرم</div></div>
+        <div><button class="icon-btn edit" onclick="openPricingModal('${pr.id}')">✎</button><button class="icon-btn danger" onclick="delPricing('${pr.id}')">🗑</button></div>
+      </div></div>`;
+    }).join('');
+    return `<div class="tree-group" id="wrap_${gid}">
+      <div class="tree-group-header" onclick="toggleTreeGroup('${gid}')"><span>${c?c.name:'مخاطب حذف‌شده'} <span class="pill">${byContact[contactId].length}</span></span><span class="tree-caret">▾</span></div>
+      <div class="tree-group-items" id="${gid}">${items}</div>
+    </div>`;
   }).join('');
 }
 function openPricingModal(id){
