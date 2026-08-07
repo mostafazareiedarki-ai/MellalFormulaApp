@@ -778,6 +778,14 @@ input:checked + .slider:before{transform:translateX(-20px);}
         <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-sendlist.png">
         <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-sendlist.png">
       </div><span>ارسال لیست</span></div>
+      <div class="tile" onclick="nav('msgsettings')"><div class="ic">
+        <img class="ic-v ic-v-mavara" src="assets/theme-icons/mavara-msgsettings.png">
+        <img class="ic-v ic-v-sepahan" src="assets/theme-icons/sepahan-msgsettings.png">
+        <img class="ic-v ic-v-perspolis" src="assets/theme-icons/perspolis-msgsettings.png">
+        <img class="ic-v ic-v-aghaghia" src="assets/theme-icons/aghaghia-msgsettings.png">
+        <img class="ic-v ic-v-ruhparvar" src="assets/theme-icons/ruhparvar-msgsettings.png">
+        <img class="ic-v ic-v-windowsphone" src="assets/theme-icons/windowsphone-msgsettings.png">
+      </div><span>تنظیمات پیام</span></div>
     </div>
   </div>
 
@@ -810,6 +818,26 @@ input:checked + .slider:before{transform:translateX(-20px);}
       <input type="hidden" id="slContact">
     </div>
     <div id="sendListPreviewBox" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- MESSAGE SETTINGS -->
+  <div class="screen" id="screen-msgsettings">
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:6px;">متن آغازین</div>
+      <div class="hint">کلیدهای در دسترس: #CustomerName (نام مشتری)، #Gender (جناب آقای / سرکار خانم)، #Date (تاریخ)</div>
+      <textarea id="msgStart" rows="4" style="margin-top:8px;"></textarea>
+    </div>
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:6px;">بدنه‌ی تکرارشونده (برای هر محصول)</div>
+      <div class="hint">کلیدهای در دسترس: #ProductName (نام محصول)، #CashPrice (قیمت نقدی)، #InstallmentPrice (قیمت مدت‌دار)، #Months (مدت به ماه)</div>
+      <textarea id="msgBody" rows="4" style="margin-top:8px;"></textarea>
+    </div>
+    <div class="form-box">
+      <div class="card-title" style="margin-bottom:6px;">متن پایانی</div>
+      <textarea id="msgEnd" rows="3" style="margin-top:8px;"></textarea>
+    </div>
+    <button class="fab secondary" onclick="saveMessageTemplate()">ذخیره تنظیمات پیام</button>
+    <button class="fab secondary" onclick="resetMessageTemplate()">بازگشت به پیش‌فرض</button>
   </div>
 
   <!-- ABOUT -->
@@ -932,9 +960,11 @@ input:checked + .slider:before{transform:translateX(-20px);}
   <button class="close-x" onclick="closeModal('contactModalBg')">×</button>
   <h3 id="contactModalTitle">مخاطب جدید</h3>
   <label>نام</label>
-  <input type="text" id="contactName" placeholder="مثلاً آقای خادم">
+  <input type="text" id="contactName" placeholder="مثلاً خادم">
   <label>شماره موبایل</label>
   <input type="tel" id="contactMobile" placeholder="09xxxxxxxxx">
+  <label>جنسیت (برای متن پیام)</label>
+  <select id="contactGender"><option value="male">آقا</option><option value="female">خانم</option></select>
   <label>گروه</label>
   <select id="contactGroup"></select>
   <button class="fab secondary" onclick="saveContact()">ذخیره</button>
@@ -991,7 +1021,8 @@ input:checked + .slider:before{transform:translateX(-20px);}
   <h3>پیش‌نمایش پیام</h3>
   <div class="hint">متن رو می‌تونید قبل از ارسال ویرایش کنید.</div>
   <textarea id="salesListTextArea" rows="10" style="margin-top:10px;"></textarea>
-  <button class="fab secondary" onclick="shareSalesListNow()">ارسال / اشتراک‌گذاری</button>
+  <button class="fab" onclick="sendSalesListSMS()">ارسال پیامک به مشتری</button>
+  <button class="fab secondary" onclick="shareSalesListNow()">اشتراک‌گذاری از طریق اپ‌های دیگر</button>
 </div></div>
 
 <!-- FORMULA TREE PICKER MODAL -->
@@ -1015,7 +1046,7 @@ input:checked + .slider:before{transform:translateX(-20px);}
    Note: this file is meant to be wrapped into a real Android app
    (see BUILD-APK-GUIDE.md). Inside such a WebView, localStorage
    persists normally between app launches. */
-const DB_KEYS = ['materials','costs','groups','formulas','history','settings','activityLog','salesGroups','contacts','products','pricing'];
+const DB_KEYS = ['materials','costs','groups','formulas','history','settings','activityLog','salesGroups','contacts','products','pricing','messageTemplate'];
 function dbGet(key, def){ try{ const v = localStorage.getItem('mc_'+key); return v?JSON.parse(v):def; }catch(e){ return def; } }
 function dbSet(key, val){ localStorage.setItem('mc_'+key, JSON.stringify(val)); }
 
@@ -1030,7 +1061,12 @@ let DB = {
   salesGroups: dbGet('salesGroups', ['عمومی']),
   contacts: dbGet('contacts', []),
   products: dbGet('products', []),
-  pricing: dbGet('pricing', [])
+  pricing: dbGet('pricing', []),
+  messageTemplate: dbGet('messageTemplate', {
+    start: '#Gender #CustomerName\nلیست قیمت محصولات خدمت شما ارسال می‌گردد.\nتاریخ: #Date',
+    body: '#ProductName، هر کیلو نقدی #CashPrice تومان و چک #Months ماهه #InstallmentPrice تومان',
+    end: 'با تشکر'
+  })
 };
 function saveDB(part){ dbSet(part, DB[part]); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -1235,7 +1271,7 @@ async function tryFingerprint(){
 const TITLES = {home:'Mellal Chem', materials:'مواد اولیه', costs:'هزینه‌های تولید', formulas:'فرمول‌ها',
   formulaEditor:'فرمول جدید', produce:'دریافت فرمول تولید', backup:'پشتیبان‌گیری و بازیابی', settings:'تنظیمات', about:'درباره برنامه',
   history:'تاریخچه تولید', activitylog:'لاگ عملکرد',
-  sales:'مدیریت فروش', contacts:'مخاطبین', products:'محصولات', pricing:'قیمت‌گذاری', sendlist:'ارسال لیست'};
+  sales:'مدیریت فروش', contacts:'مخاطبین', products:'محصولات', pricing:'قیمت‌گذاری', sendlist:'ارسال لیست', msgsettings:'تنظیمات پیام'};
 let currentScreen='home';
 let navStack=[];
 function nav(name, fromBack){
@@ -1260,6 +1296,7 @@ function nav(name, fromBack){
   if(name==='products') renderProducts();
   if(name==='pricing') renderPricing();
   if(name==='sendlist') renderSendListScreen();
+  if(name==='msgsettings') renderMessageSettings();
   window.scrollTo(0,0);
 }
 function goBack(){
@@ -1562,8 +1599,8 @@ function calcProduce(){
       <table class="data-table"><thead><tr><th>ماده / هزینه</th><th class="num">قیمت (تومان)</th></tr></thead><tbody>
         ${matLines.map(l=>`<tr><td>${l.name}</td><td class="num">${fmt(l.cost)}</td></tr>`).join('')}
         ${costLines.map(l=>`<tr><td>${l.name}</td><td class="num">${fmt(l.val)}</td></tr>`).join('')}
-        <tr class="table-total-row"><td>قیمت تمام‌شده کل</td><td class="num">${fmt(total)}</td></tr>
-        <tr class="table-total-row"><td>قیمت تمام‌شده هر کیلوگرم</td><td class="num">${fmt(total/qty)}</td></tr>
+        <tr class="table-total-row"><td>قیمت تمام‌شده کل</td><td class="num">${fmt(roundPrice(total))}</td></tr>
+        <tr class="table-total-row"><td>قیمت تمام‌شده هر کیلوگرم</td><td class="num">${fmt(roundPrice(total/qty))}</td></tr>
       </tbody></table>
       <button class="fab secondary" onclick="exportProducePDF()">خروجی PDF</button>
     </div>`;
@@ -1585,8 +1622,8 @@ function renderProfitTable(){
   const fee=parseFloat(document.getElementById('feeInput').value)||0;
 
   const totalMargin = marginPerKg * r.qty;
-  const cashPrice = r.total + totalMargin;
-  const cashPricePerKg = cashPrice / r.qty;
+  const cashPrice = roundPrice(r.total + totalMargin);
+  const cashPricePerKg = roundPrice(cashPrice / r.qty);
 
   let rows = `
     <tr><td>قیمت تمام‌شده (بدون سود)</td><td class="num">${fmt(r.total)}</td><td class="num">${fmt(r.perKg)}</td></tr>
@@ -1595,8 +1632,8 @@ function renderProfitTable(){
   if(months>0){
     let running = cashPrice;
     for(let m=1; m<=months; m++){
-      running = running * (1 + fee/100);
-      const perKg = running / r.qty;
+      running = roundPrice(running * (1 + fee/100));
+      const perKg = roundPrice(running / r.qty);
       const isLast = m===months;
       rows += `<tr${isLast?' class="table-total-row"':''}><td>ماه ${m}</td><td class="num">${fmt(running)}</td><td class="num">${fmt(perKg)}</td></tr>`;
     }
@@ -1774,7 +1811,7 @@ function downloadImageNow(){
 /* ============ BACKUP / RESTORE ============ */
 function buildBackupData(){
   return {materials:DB.materials, costs:DB.costs, groups:DB.groups, formulas:DB.formulas, history:DB.history, settings:{...DB.settings}, activityLog:DB.activityLog,
-    salesGroups:DB.salesGroups, contacts:DB.contacts, products:DB.products, pricing:DB.pricing};
+    salesGroups:DB.salesGroups, contacts:DB.contacts, products:DB.products, pricing:DB.pricing, messageTemplate:DB.messageTemplate};
 }
 function isCapacitorFS(){
   return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem);
@@ -1925,7 +1962,7 @@ function normalizeRestoredData(data){
   out.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings||{});
   out.salesGroups = (data.salesGroups && data.salesGroups.length) ? data.salesGroups : ['عمومی'];
   out.contacts = (data.contacts||[]).map(c=>({
-    id: c.id || uid(), name: c.name || '', mobile: c.mobile || '', group: c.group || out.salesGroups[0]
+    id: c.id || uid(), name: c.name || '', mobile: c.mobile || '', group: c.group || out.salesGroups[0], gender: c.gender || 'male'
   }));
   out.products = (data.products||[]).map(p=>({
     id: p.id || uid(), name: p.name || '', formulaId: p.formulaId || '',
@@ -1936,6 +1973,11 @@ function normalizeRestoredData(data){
     id: pr.id || uid(), contactId: pr.contactId || '', productId: pr.productId || '',
     marginPerKg: (typeof pr.marginPerKg==='number') ? pr.marginPerKg : (parseFloat(pr.marginPerKg)||0)
   }));
+  out.messageTemplate = Object.assign({
+    start: '#Gender #CustomerName\nلیست قیمت محصولات خدمت شما ارسال می‌گردد.\nتاریخ: #Date',
+    body: '#ProductName، هر کیلو نقدی #CashPrice تومان و چک #Months ماهه #InstallmentPrice تومان',
+    end: 'با تشکر'
+  }, data.messageTemplate||{});
   return out;
 }
 function applyRestoredData(data){
@@ -2070,20 +2112,23 @@ function openContactModal(id){
     const c=DB.contacts.find(x=>x.id===id);
     document.getElementById('contactName').value=c.name;
     document.getElementById('contactMobile').value=c.mobile;
+    document.getElementById('contactGender').value=c.gender||'male';
     gSel.value=c.group;
   } else {
     document.getElementById('contactName').value='';
     document.getElementById('contactMobile').value='';
+    document.getElementById('contactGender').value='male';
   }
   document.getElementById('contactModalBg').classList.add('show');
 }
 function saveContact(){
   const name=document.getElementById('contactName').value.trim();
   const mobile=document.getElementById('contactMobile').value.trim();
+  const gender=document.getElementById('contactGender').value;
   const group=document.getElementById('contactGroup').value;
   if(!name||!mobile){ toast('نام و شماره موبایل را وارد کنید'); return; }
-  if(editingContactId){ const c=DB.contacts.find(x=>x.id===editingContactId); Object.assign(c,{name,mobile,group}); }
-  else{ DB.contacts.push({id:uid(), name, mobile, group}); }
+  if(editingContactId){ const c=DB.contacts.find(x=>x.id===editingContactId); Object.assign(c,{name,mobile,group,gender}); }
+  else{ DB.contacts.push({id:uid(), name, mobile, group, gender}); }
   saveDB('contacts'); closeModal('contactModalBg'); renderContacts(); toast('ذخیره شد');
   logActivity('مخاطب فروش ثبت شد', name);
 }
@@ -2270,15 +2315,41 @@ function renderSendListPreview(){
     </div>`;
   _lastSendListData = {contact, lines};
 }
+function genderHonorific(contact){
+  return (contact && contact.gender==='female') ? 'سرکار خانم' : 'جناب آقای';
+}
+function fillTemplate(tpl, tokens){
+  let out = tpl;
+  Object.keys(tokens).forEach(k=>{ out = out.split('#'+k).join(tokens[k]); });
+  return out;
+}
 function openSalesListPreview(){
   if(!_lastSendListData){ toast('ابتدا یک مخاطب انتخاب کنید'); return; }
   const dateStr = jalaliDateEn(new Date());
-  let msg = `جناب آقای ${_lastSendListData.contact.name}\nلیست قیمت محصولات خدمت شما ارسال می‌گردد.\nتاریخ: ${dateStr}\n`;
-  _lastSendListData.lines.forEach(l=>{
-    msg += `${l.name}، هر کیلو نقدی ${fmt(l.cashPrice)} تومان و چک ${l.months} ماهه ${fmt(l.nonCash)} تومان\n`;
+  const tpl = DB.messageTemplate;
+  const startTxt = fillTemplate(tpl.start, {
+    CustomerName: _lastSendListData.contact.name,
+    Gender: genderHonorific(_lastSendListData.contact),
+    Date: dateStr
   });
+  const bodyLines = _lastSendListData.lines.map(l=> fillTemplate(tpl.body, {
+    ProductName: l.name,
+    CashPrice: fmt(l.cashPrice),
+    InstallmentPrice: fmt(l.nonCash),
+    Months: l.months
+  })).join('\n');
+  const msg = [startTxt, bodyLines, tpl.end].filter(s=>s && s.trim()).join('\n');
   document.getElementById('salesListTextArea').value = msg;
   document.getElementById('salesListModalBg').classList.add('show');
+}
+function sendSalesListSMS(){
+  const msg = document.getElementById('salesListTextArea').value;
+  if(!msg.trim()){ toast('متن پیام خالی است'); return; }
+  const contact = _lastSendListData ? _lastSendListData.contact : null;
+  if(!contact || !contact.mobile){ toast('شماره موبایل این مخاطب ثبت نشده'); return; }
+  const mobile = contact.mobile.replace(/[^0-9+]/g,'');
+  window.location.href = `sms:${mobile}?body=${encodeURIComponent(msg)}`;
+  logActivity('ارسال پیامک لیست قیمت', contact.name);
 }
 async function shareSalesListNow(){
   const msg = document.getElementById('salesListTextArea').value;
@@ -2298,6 +2369,31 @@ async function shareSalesListNow(){
   }
   if(navigator.clipboard){ navigator.clipboard.writeText(msg); toast('پنجره اشتراک‌گذاری در دسترس نیست؛ متن کپی شد'); }
   else{ toast('اشتراک‌گذاری در این نسخه از برنامه پشتیبانی نمی‌شود'); }
+}
+function renderMessageSettings(){
+  document.getElementById('msgStart').value = DB.messageTemplate.start;
+  document.getElementById('msgBody').value = DB.messageTemplate.body;
+  document.getElementById('msgEnd').value = DB.messageTemplate.end;
+}
+function saveMessageTemplate(){
+  DB.messageTemplate = {
+    start: document.getElementById('msgStart').value,
+    body: document.getElementById('msgBody').value,
+    end: document.getElementById('msgEnd').value
+  };
+  saveDB('messageTemplate');
+  toast('تنظیمات پیام ذخیره شد');
+  logActivity('تنظیمات پیام تغییر کرد');
+}
+function resetMessageTemplate(){
+  DB.messageTemplate = {
+    start: '#Gender #CustomerName\nلیست قیمت محصولات خدمت شما ارسال می‌گردد.\nتاریخ: #Date',
+    body: '#ProductName، هر کیلو نقدی #CashPrice تومان و چک #Months ماهه #InstallmentPrice تومان',
+    end: 'با تشکر'
+  };
+  saveDB('messageTemplate');
+  renderMessageSettings();
+  toast('به پیش‌فرض بازگشت');
 }
 
 /* ============ PDF EXPORT (via system print dialog) ============ */
